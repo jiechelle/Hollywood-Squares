@@ -1,68 +1,32 @@
 package com.queens;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.*;
+
+import java.util.ArrayList;
 
 public class Player {
 
     private String username;
     private String password;
-    private int current_score;
-    private PrintWriter outWriter;
+    private int    currentScore;
 
-    ArrayList<Integer> high_score = new ArrayList<Integer>();
+    private ArrayList<Integer> highScores;
 
-    public Player(String un, String pw, File scoreList) throws FileNotFoundException {
+    public Player(String username, String password, ArrayList<Integer> highScores) {
 
-        outWriter = new PrintWriter(scoreList);
-        setUserName(un);
-        setPassword(pw);
-
+        this.username = username;
+        this.password = password;
+        currentScore = 0;
+        this.highScores = highScores;
     }
 
-    public String getUserName() {
-
-        return username;
-
+    public int getCurrentScore() {
+        return currentScore;
     }
 
-    public String getPassword() {
-
-        return password;
-
+    public void setCurrentScore(int currentScore) {
+        this.currentScore = currentScore;
     }
 
-    public void setPassword(String pw) {
-
-        password = pw;
-
+    public void addHighScore(int score) {
+        highScores.add(score);
     }
-
-    public void setUserName(String un) {
-
-        username = un;
-
-    }
-
-    public void addHigh(int score) {
-
-        high_score.add(score);
-
-    }
-
-    public void saveScore() {
-
-        for (int i = 0; i < high_score.size(); i++) {
-           // outWriter <<"a";
-            //fix print to text file
-          //  outWriter<<(high_score.get(i));
-            System.out.println(high_score.get(i)); //WRITE TO TEXT FILE
-        }
-
-    }
-
-
-
-
 }
