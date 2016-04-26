@@ -14,8 +14,18 @@ public class Player {
 
         this.username = username;
         this.password = password;
+
         currentScore = 0;
         this.highScores = highScores;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+
+        return password;
     }
 
     public int getCurrentScore() {
@@ -24,6 +34,10 @@ public class Player {
 
     public void setCurrentScore(int currentScore) {
         this.currentScore = currentScore;
+    }
+
+    public ArrayList<Integer> getHighScores() {
+        return highScores;
     }
 
     public void addHighScore(int score) {
