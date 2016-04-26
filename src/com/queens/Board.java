@@ -18,6 +18,14 @@ public class Board {
         populateWinConfig();
     }
 
+    public int getxCount() {
+        return xCount;
+    }
+
+    public int getoCount() {
+        return oCount;
+    }
+
     public int[] getBoard() {
         return board;
     }
@@ -30,14 +38,6 @@ public class Board {
         } else {
             oCount++;
         }
-    }
-
-    public int getxCount() {
-        return xCount;
-    }
-
-    public int getoCount() {
-        return oCount;
     }
 
     private void populateWinConfig() {
