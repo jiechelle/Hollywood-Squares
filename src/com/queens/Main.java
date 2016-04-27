@@ -16,6 +16,7 @@ public class Main {
         }
 
         data.writeFile();
+
     //    Login login = new Login(data);
     //    Game game = new Game(data, login.getUsers());
     //    GameGUI gameGUI = new GameGUI(game)

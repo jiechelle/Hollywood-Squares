@@ -4,18 +4,18 @@ import java.util.ArrayList;
 
 public class Player {
 
+    private int    currentScore;
     private String username;
     private String password;
-    private int    currentScore;
 
     private ArrayList<Integer> highScores;
 
     public Player(String username, String password, ArrayList<Integer> highScores) {
 
+        currentScore = 0;
         this.username = username;
         this.password = password;
 
-        currentScore = 0;
         this.highScores = highScores;
     }
 
@@ -24,7 +24,6 @@ public class Player {
     }
 
     public String getPassword() {
-
         return password;
     }
 

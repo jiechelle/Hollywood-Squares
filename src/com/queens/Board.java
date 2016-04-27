@@ -69,10 +69,16 @@ public class Board {
         return playerMarks;
     }
 
-    public boolean isWinner() {
-        return winConfig.containsKey(convertToString(1)) ||
-                winConfig.containsKey(convertToString(2)) ||
-                xCount > 5 || oCount > 5;
+    public int isWinner() {
+        if (winConfig.containsKey(convertToString(1)) || xCount > 5) {
+            return 1;
+        }
+
+        if (winConfig.containsKey(convertToString(2)) || oCount > 5) {
+            return 2;
+        }
+
+        return 0;
     }
 
 }
