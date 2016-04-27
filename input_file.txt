@@ -1,4 +1,4 @@
-alex great 2 3 4 
-john doe 0 
-ivan meh 0 
-jaylin i_misspelled_your_name 3 4 6 8 
+alex great 2 3 4
+john doe 0
+ivan meh 0
+jaylin i_misspelled_your_name 3 4 6 8

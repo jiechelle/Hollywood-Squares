@@ -9,19 +9,20 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class DataFile {
-    private File file;
+    private File        playersFile;
     private Scanner     inputFile;
     private PrintWriter outFile;
 
+    private HashMap<String, String> questions;
     private HashMap<String, Player> players;
 
     public DataFile() {
         System.out.println(System.getProperty("user.dir"));
-        file = new File("input_file.txt");
+        playersFile = new File("input_file.txt");
         players = new HashMap<>();
 
         try {
-            inputFile = new Scanner(file);
+            inputFile = new Scanner(playersFile);
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File not found, Exception %s", e.getMessage()));
             System.exit(1);
@@ -63,16 +64,16 @@ public class DataFile {
 
         // check if username is in players if not add him
         if (players.containsKey(username)) {
-            throw new Exception("Username already in data file");
+            throw new Exception("Username already in data playersFile");
         } else {
             players.put(username, new Player(username, password, new ArrayList<>()));
             return true;
         }
     }
 
-    public void writeFile() {
+    public void writePlayers() {
         try {
-            outFile = new PrintWriter(file);
+            outFile = new PrintWriter(playersFile);
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File not found, Exception %s", e.getMessage()));
         } catch (Exception e) {

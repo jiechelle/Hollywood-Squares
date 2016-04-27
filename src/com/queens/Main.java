@@ -15,10 +15,11 @@ public class Main {
             System.err.println(String.format("Exception, %s", e.getMessage()));
         }
 
-        data.writeFile();
+        data.writePlayers();
 
     //    Login login = new Login(data);
-    //    Game game = new Game(data, login.getUsers());
+    //    Player[] players = login.getPlayers();
+    //    Game game = new Game(data, players);
     //    GameGUI gameGUI = new GameGUI(game)
     }
 }

@@ -1,24 +1,22 @@
 package com.queens;
 
-import java.util.HashMap;
-
 public class Game {
+
+    private Board   board;
     private Player  player1;
     private Player  player2;
-    private Board   board;
-    private boolean winner;
-    private HashMap questions;
 
     public Game(Player[] players) {
-        winner = false;
+        board = new Board();
+        player1 = players[0];
+        player2 = players[1];
+    }
 
-    }//constructor
-
-    public boolean CheckWinner() {
+    public int CheckWinner() {
         return board.isWinner();
-    }//Check Winner
+    }
 
     public void pickFirstPlayer() {
 
     }
-}//Game
+}
