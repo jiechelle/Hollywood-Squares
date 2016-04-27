@@ -1,5 +1,4 @@
 package com.queens;
-
 import java.util.HashMap;
 
 public class Board {
