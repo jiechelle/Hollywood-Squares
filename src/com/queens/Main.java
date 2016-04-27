@@ -1,7 +1,5 @@
 package com.queens;
 
-import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
-
 import javax.xml.bind.ValidationException;
 
 public class Main {
