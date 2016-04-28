@@ -6,18 +6,22 @@ public class Main {
 
     public static void main(String[] args) {
         DataFile data = new DataFile();
+        GameGUI a = new GameGUI();
+        a.show(args);
 
-        try {
-            data.addPlayer("john", "doe");
-        } catch (ValidationException e) {
-            System.err.println(String.format("ValidationException, %s", e.getMessage()));
-        } catch (Exception e) {
-            System.err.println(String.format("Exception, %s", e.getMessage()));
-        }
+        //try {
+        //    data.addPlayer("john", "doe");
+        //} catch (ValidationException e) {
+        //    System.err.println(String.format("ValidationException, %s", e.getMessage()));
+        //} catch (Exception e) {
+        //    System.err.println(String.format("Exception, %s", e.getMessage()));
+        //}
+        //
+        //data.writePlayers();
 
-        data.writeFile();
     //    Login login = new Login(data);
-    //    Game game = new Game(data, login.getUsers());
+    //    Player[] players = login.getPlayers();
+    //    Game game = new Game(data, players);
     //    GameGUI gameGUI = new GameGUI(game)
     }
 }

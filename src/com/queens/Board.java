@@ -1,10 +1,11 @@
 package com.queens;
+
 import java.util.HashMap;
 
 public class Board {
     private int[] board;
-    private int   xCount;
-    private int   oCount;
+    private int xCount;
+    private int oCount;
 
     private HashMap<String, Integer> winConfig;
 
@@ -39,6 +40,31 @@ public class Board {
         }
     }
 
+    /**
+     * Check if player has won the game
+     *
+     * @return if Mr. X or Mrs. O is winner return 1 or 2 respectively else return 0
+     */
+    public int checkWinner() {
+
+        // convert board of players marks into a string then check if it is a
+        // winning config or if the xCount is greater than 5.
+        if (winConfig.containsKey(convertToString(1)) || xCount > 5) {
+            return 1;
+        }
+
+        // convert board of players marks into a string then check if it is a
+        // winning config or if the oCount is greater than 5.
+        if (winConfig.containsKey(convertToString(2)) || oCount > 5) {
+            return 2;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Add all winning configurations to winConfig
+     */
     private void populateWinConfig() {
         // horizontal wins
         winConfig.put("111000000", null);
@@ -55,6 +81,12 @@ public class Board {
         winConfig.put("001010100", null);
     }
 
+    /**
+     * Convert board into a string of 1's and 0's
+     *
+     * @param player's mark to convert string
+     * @return a string of the board eg. "10110010"
+     */
     private String convertToString(int player) {
         String playerMarks = "";
 
@@ -67,12 +99,6 @@ public class Board {
         }
 
         return playerMarks;
-    }
-
-    public boolean isWinner() {
-        return winConfig.containsKey(convertToString(1)) ||
-                winConfig.containsKey(convertToString(2)) ||
-                xCount > 5 || oCount > 5;
     }
 
 }
