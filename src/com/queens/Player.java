@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Player {
 
-    private int    currentScore;
+    private int currentScore;
     private String username;
     private String password;
 

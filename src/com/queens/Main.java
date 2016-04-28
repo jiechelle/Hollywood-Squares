@@ -6,6 +6,8 @@ public class Main {
 
     public static void main(String[] args) {
         DataFile data = new DataFile();
+        GameGUI a = new GameGUI();
+        a.show(args);
 
         //try {
         //    data.addPlayer("john", "doe");

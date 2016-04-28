@@ -5,9 +5,9 @@ import java.util.Random;
 public class Game {
 
     private DataFile data;
-    private Board   board;
-    private Player  player1;
-    private Player  player2;
+    private Board board;
+    private Player player1;
+    private Player player2;
 
     public Game(DataFile data, Player[] players) {
         this.data = data;

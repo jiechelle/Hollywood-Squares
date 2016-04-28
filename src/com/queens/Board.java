@@ -1,10 +1,11 @@
 package com.queens;
+
 import java.util.HashMap;
 
 public class Board {
     private int[] board;
-    private int   xCount;
-    private int   oCount;
+    private int xCount;
+    private int oCount;
 
     private HashMap<String, Integer> winConfig;
 
