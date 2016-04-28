@@ -44,7 +44,7 @@ public class Board {
      *
      * @return if Mr. X or Mrs. O is winner return 1 or 2 respectively else return 0
      */
-    public int isWinner() {
+    public int checkWinner() {
 
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
