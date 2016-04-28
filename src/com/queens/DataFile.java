@@ -129,9 +129,9 @@ public class DataFile {
         // check if username is in players if not add him
         if (players.containsKey(username)) {
             throw new Exception("Username already in data playersfilePath");
-        } else {
-            players.put(username, new Player(username, password, new ArrayList<>()));
         }
+
+        players.put(username, new Player(username, password, new ArrayList<>()));
     }
 
     /**

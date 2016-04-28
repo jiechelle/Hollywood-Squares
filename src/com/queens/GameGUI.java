@@ -4,13 +4,14 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GameGUI extends Application {
 
-    Stage window;
     Button[] buttons;
 
     public void start(Stage primaryStage) {
@@ -20,32 +21,66 @@ public class GameGUI extends Application {
         for (Integer i = 0; i < buttons.length; i++) {
             buttons[i] = new Button();
             buttons[i].setText(Integer.toString(i));
-            buttons[i].setOnAction(e -> System.out.println("Lambda expressions are awesome!"));
-            buttons[i].setPrefSize(100, 20);
+            buttons[i].setOnAction(e -> {
+                buttons[0].setText("X");
+                System.out.println("body button");
+            });
+            buttons[i].setPrefSize(100, 100);
         }
 
-        HBox hbox = new HBox(20);
-        hbox.setAlignment(Pos.TOP_CENTER); // default TOP_LEFT
+        Label correct = new Label("Correct");
+        correct.setVisible(false);
 
-        VBox vbox1 = new VBox(20);
-        vbox1.setAlignment(Pos.CENTER);
+        Button accept = new Button();
+        accept.setText("Yes");
+        accept.setOnAction(e -> {
+            correct.setVisible(true);
+            correct.setText("Correct");
+        });
+        accept.setPrefSize(100, 20);
 
-        VBox vbox2 = new VBox(20);
-        vbox2.setAlignment(Pos.CENTER);
+        Button decline = new Button();
+        decline.setText("No");
+        decline.setOnAction(e -> {
+            correct.setVisible(true);
+            correct.setText("Wrong");
+        });
+        decline.setPrefSize(100, 20);
 
-        VBox vbox3 = new VBox(20);
-        vbox3.setAlignment(Pos.CENTER);
+        Text question = new Text();
+        question.setText("QUESTION GOES HERE");
+
+        VBox root_box = new VBox(20);
+        root_box.setAlignment(Pos.CENTER); // default TOP_LEFT
+
+        HBox top = new HBox(20);
+        top.setAlignment(Pos.CENTER);
+
+        HBox first_row = new HBox(20);
+        first_row.setAlignment(Pos.CENTER);
+
+        HBox second_row = new HBox(20);
+        second_row.setAlignment(Pos.CENTER);
+
+        HBox third_row = new HBox(20);
+        third_row.setAlignment(Pos.CENTER);
+
+        HBox bottom = new HBox(20);
+        bottom.setAlignment(Pos.TOP_CENTER);
 
         int j = 3;
         int k = 6;
         for (int i = 0; i < 3; i++) {
-            vbox1.getChildren().add(buttons[i]);
-            vbox2.getChildren().add(buttons[j++]);
-            vbox3.getChildren().add(buttons[k++]);
+            first_row.getChildren().add(buttons[i]);
+            second_row.getChildren().add(buttons[j++]);
+            third_row.getChildren().add(buttons[k++]);
         }
 
-        hbox.getChildren().addAll(vbox1, vbox2, vbox3);
-        Scene scene = new Scene(hbox, 500, 300); // the hbox is the root node
+        top.getChildren().addAll(question, correct);
+        bottom.getChildren().addAll(accept, decline);
+        root_box.getChildren().addAll(top, first_row, second_row, third_row, bottom);
+
+        Scene scene = new Scene(root_box, 600, 500);
 
         primaryStage.setScene(scene);
         primaryStage.show();

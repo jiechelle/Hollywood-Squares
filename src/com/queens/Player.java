@@ -15,7 +15,6 @@ public class Player {
         currentScore = 0;
         this.username = username;
         this.password = password;
-
         this.highScores = highScores;
     }
 
