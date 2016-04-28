@@ -2,45 +2,43 @@ package com.queens;
 
 import javax.xml.bind.ValidationException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DataFile {
-    private File    playersfilePath;
     private Scanner playersData;
     private Scanner questionsData;
+    private PrintWriter writePlayersData;
 
-    private PrintWriter outFile;
-
-    private HashMap<String, String> questions;
     private HashMap<String, Player> players;
+    private HashMap<String, String[]> questions;
+    private HashMap<String, String[]> questionsClone;
 
     public DataFile() {
-        playersfilePath = new File("players_data.txt");
         players = new HashMap<>();
+        questions = new HashMap<>();
 
         try {
-            playersData = new Scanner(playersfilePath);
+            playersData = new Scanner(new File("players_data.txt"));
             questionsData = new Scanner(new File("questions.txt"));
-        } catch (FileNotFoundException e) {
-            System.err.println(String.format("File not found, Exception %s", e.getMessage()));
-            System.exit(1);
         } catch (Exception e) {
             System.err.println(String.format("Unexpected error %s", e.getMessage()));
             System.exit(1);
         }
 
+        // Add players to hash map players for easy lookup
         while (playersData.hasNext()) {
             String username = playersData.next();
             String password = playersData.next();
 
-            int                numberOfHighScores = playersData.nextInt();
-            ArrayList<Integer> highScores         = new ArrayList<>();
+            int numberOfHighScores = playersData.nextInt();
+
+            ArrayList<Integer> highScores = new ArrayList<>();
 
             for (int i = 0; i < numberOfHighScores; i++) {
                 highScores.add(playersData.nextInt());
@@ -49,38 +47,80 @@ public class DataFile {
             players.put(username, (new Player(username, password, highScores)));
         }
 
-        String question = "";
-        String answers  = "";
+        // Read the entire file and remove new line characters
+        String entire_file = questionsData.useDelimiter("\\Z").next().replace("\n", " ");
 
-        String line = questionsData.useDelimiter("\\Z").next().replace("\n", " ");
+        Pattern p = Pattern.compile("\\s*([^\\?]*)\\?\\s*([^;]*);");  // "\s*(.*?)\?\s*(.*?);"
+        Matcher m = p.matcher(entire_file);
 
-        // "(.*\\?)(\\s*)(.*);"
-        Pattern p = Pattern.compile("\\s*(.*?)\\?\\s*(.*?)>");
-        Matcher m = p.matcher(line);
-
+        // Add questions to hash map questions
         while (m.find()) {
-            System.out.println("Q " + m.group(1));
-            System.out.println("A " + m.group(2));
-            //questions.put(m.group(1), m.group(2));
+            // split answers by comma
+            String[] answers = m.group(2).split(",");
+
+            // remove leading and trailing spaces
+            for (int i = 0; i < answers.length; i++) {
+                answers[i] = answers[i].trim();
+            }
+            questions.put(m.group(1), answers);
         }
 
-        //for (String key: questions.keySet()) {
-        //    System.out.println(key + " " + questions.get(key));
-        //}
+        questionsClone = (HashMap) questions.clone();
 
         playersData.close();
         questionsData.close();
     }
 
-    public boolean checkPlayerCredentials(String username, String password) {
-        if (players.containsKey(username)) {
-            return players.get(username).getPassword().equals(password);
-        } else {
-            return false;
+    /**
+     * Pick a question randomly, remove it from the pool of questions and
+     * if all the questions are depleted then reset questionsClone.
+     *
+     * @return randomly selected question
+     */
+    public HashMap<String, String[]> getQuestion() {
+        Random generator = new Random();
+        Object[] keys = questionsClone.keySet().toArray();
+
+        // pick a random key
+        String randomKey = (String) keys[generator.nextInt(keys.length)];
+        String[] answers = questionsClone.get(randomKey);
+
+        // Add the random key and answers to a new Hashmap
+        HashMap<String, String[]> randomQuestion = new HashMap<>();
+        randomQuestion.put(randomKey, answers);
+
+        // To prevent questions from repeating, remove question from hash map
+        questionsClone.remove(randomKey);
+
+        if (questionsClone.size() == 0) {
+            questionsClone = (HashMap) questions.clone();
         }
+
+        return randomQuestion;
     }
 
-    public boolean addPlayer(String username, String password) throws Exception {
+    /**
+     * Check if the username and password is correct. First check if the username
+     * is in the hash map players and if so then check if the password entered
+     * matches the one on file.
+     *
+     * @param username to check
+     * @param password to check
+     * @return true or false depending on condition
+     */
+    public boolean checkPlayerCredentials(String username, String password) {
+        return players.containsKey(username) && players.get(username).getPassword().equals(password);
+    }
+
+    /**
+     * Add player to hash map players
+     *
+     * @param username for player
+     * @param password for player
+     * @throws ValidationException if username or password has whitespaces
+     * @throws Exception if username is already in hash map players
+     */
+    public void addPlayer(String username, String password) throws Exception {
         // check if username or password has whitespaces in it
         if (username.matches(".*\\s+.*") || password.matches(".*\\s+.*")) {
             throw new ValidationException("Username or password has whitespaces");
@@ -91,15 +131,15 @@ public class DataFile {
             throw new Exception("Username already in data playersfilePath");
         } else {
             players.put(username, new Player(username, password, new ArrayList<>()));
-            return true;
         }
     }
 
+    /**
+     * Write all players to file. Function shall be called at end of game.
+     */
     public void writePlayers() {
         try {
-            outFile = new PrintWriter(playersfilePath);
-        } catch (FileNotFoundException e) {
-            System.err.println(String.format("File not found, Exception %s", e.getMessage()));
+            writePlayersData = new PrintWriter(new File("players_data.txt"));
         } catch (Exception e) {
             System.err.println(String.format("Unexpected error %s", e.getMessage()));
         }
@@ -114,11 +154,11 @@ public class DataFile {
             }
 
             // write username password num_of_scores <all scores separated by spaces>
-            outFile.write(String.format("%s %s %d %s\n", player.getUsername(),
+            writePlayersData.write(String.format("%s %s %d %s\n", player.getUsername(),
                     player.getPassword(), player.getHighScores().size(), scores));
         }
 
-        outFile.close();
+        writePlayersData.close();
     }
 
 }
