@@ -7,15 +7,15 @@ public class Main {
     public static void main(String[] args) {
         DataFile data = new DataFile();
 
-        try {
-            data.addPlayer("john", "doe");
-        } catch (ValidationException e) {
-            System.err.println(String.format("ValidationException, %s", e.getMessage()));
-        } catch (Exception e) {
-            System.err.println(String.format("Exception, %s", e.getMessage()));
-        }
-
-        data.writePlayers();
+        //try {
+        //    data.addPlayer("john", "doe");
+        //} catch (ValidationException e) {
+        //    System.err.println(String.format("ValidationException, %s", e.getMessage()));
+        //} catch (Exception e) {
+        //    System.err.println(String.format("Exception, %s", e.getMessage()));
+        //}
+        //
+        //data.writePlayers();
 
     //    Login login = new Login(data);
     //    Player[] players = login.getPlayers();

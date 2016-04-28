@@ -7,22 +7,26 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DataFile {
-    private File        playersFile;
-    private Scanner     inputFile;
+    private File    playersfilePath;
+    private Scanner playersData;
+    private Scanner questionsData;
+
     private PrintWriter outFile;
 
     private HashMap<String, String> questions;
     private HashMap<String, Player> players;
 
     public DataFile() {
-        System.out.println(System.getProperty("user.dir"));
-        playersFile = new File("input_file.txt");
+        playersfilePath = new File("players_data.txt");
         players = new HashMap<>();
 
         try {
-            inputFile = new Scanner(playersFile);
+            playersData = new Scanner(playersfilePath);
+            questionsData = new Scanner(new File("questions.txt"));
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File not found, Exception %s", e.getMessage()));
             System.exit(1);
@@ -31,21 +35,41 @@ public class DataFile {
             System.exit(1);
         }
 
-        while (inputFile.hasNext()) {
-            String username = inputFile.next();
-            String password = inputFile.next();
+        while (playersData.hasNext()) {
+            String username = playersData.next();
+            String password = playersData.next();
 
-            int numberOfHighScores = inputFile.nextInt();
-            ArrayList<Integer> highScores = new ArrayList<>();
+            int                numberOfHighScores = playersData.nextInt();
+            ArrayList<Integer> highScores         = new ArrayList<>();
 
             for (int i = 0; i < numberOfHighScores; i++) {
-                highScores.add(inputFile.nextInt());
+                highScores.add(playersData.nextInt());
             }
 
             players.put(username, (new Player(username, password, highScores)));
         }
 
-        inputFile.close();
+        String question = "";
+        String answers  = "";
+
+        String line = questionsData.useDelimiter("\\Z").next().replace("\n", " ");
+
+        // "(.*\\?)(\\s*)(.*);"
+        Pattern p = Pattern.compile("\\s*(.*?)\\?\\s*(.*?)>");
+        Matcher m = p.matcher(line);
+
+        while (m.find()) {
+            System.out.println("Q " + m.group(1));
+            System.out.println("A " + m.group(2));
+            //questions.put(m.group(1), m.group(2));
+        }
+
+        //for (String key: questions.keySet()) {
+        //    System.out.println(key + " " + questions.get(key));
+        //}
+
+        playersData.close();
+        questionsData.close();
     }
 
     public boolean checkPlayerCredentials(String username, String password) {
@@ -64,7 +88,7 @@ public class DataFile {
 
         // check if username is in players if not add him
         if (players.containsKey(username)) {
-            throw new Exception("Username already in data playersFile");
+            throw new Exception("Username already in data playersfilePath");
         } else {
             players.put(username, new Player(username, password, new ArrayList<>()));
             return true;
@@ -73,19 +97,19 @@ public class DataFile {
 
     public void writePlayers() {
         try {
-            outFile = new PrintWriter(playersFile);
+            outFile = new PrintWriter(playersfilePath);
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File not found, Exception %s", e.getMessage()));
         } catch (Exception e) {
             System.err.println(String.format("Unexpected error %s", e.getMessage()));
         }
 
-        for (Player player: players.values()) {
+        for (Player player : players.values()) {
             String scores = "";
 
             // go through players high scores and create one string
             // with spaces between scores
-            for (Integer i: player.getHighScores()) {
+            for (Integer i : player.getHighScores()) {
                 scores += Integer.toString(i) + " ";
             }
 
