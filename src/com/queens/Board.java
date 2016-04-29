@@ -30,14 +30,18 @@ public class Board {
         return board;
     }
 
-    public void setBoard(int index, int value) {
-        this.board[index] = value;
+    public void setSquare(int index, Player currentPlayer) {
+        this.board[index] = currentPlayer.getMarker();
 
-        if (value == 1) {
+        if (currentPlayer.getMarker() == 1) {
             xCount++;
         } else {
             oCount++;
         }
+    }
+
+    public void resetSquare(int index) {
+        this.board[index] = 0;
     }
 
     /**

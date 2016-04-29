@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Player {
 
+    private int marker;
     private int currentScore;
     private String username;
     private String password;
@@ -16,6 +17,14 @@ public class Player {
         this.username = username;
         this.password = password;
         this.highScores = highScores;
+    }
+
+    public int getMarker() {
+        return marker;
+    }
+
+    public void setMarker(int marker) {
+        this.marker = marker;
     }
 
     public String getUsername() {
