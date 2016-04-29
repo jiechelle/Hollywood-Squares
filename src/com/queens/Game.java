@@ -12,6 +12,7 @@ public class Game {
     private Player currentPlayer;
     private String question;
     private String[] answers;
+    private String celebrityAnswer;
 
     public Game(DataFile data, Player[] players) {
         this.data = data;
@@ -41,24 +42,27 @@ public class Game {
         }
     }
 
-    public void getRandomQuestion() {
+    public void selectQuestionAndAnswers() {
         HashMap<String, String[]> randomQuestion = data.getQuestion();
         for (String key: randomQuestion.keySet()) {
             question = key;
             answers = randomQuestion.get(key);
         }
-    }
 
-    public boolean checkAnswer(String player_answer) {
-        return player_answer.equals(answers[0]);
-    }
-
-    public String[] getAnswers() {
-        return answers;
+        int index = new Random().nextInt(answers.length);
+        celebrityAnswer = answers[index];
     }
 
     public String getQuestion() {
         return question;
+    }
+
+    public String getCelebrityAnswer() {
+        return celebrityAnswer;
+    }
+
+    public boolean checkAnswer() {
+        return celebrityAnswer.equals(answers[0]);
     }
 
     public int computerSelectSquare() {
@@ -66,17 +70,13 @@ public class Game {
         return board.getAvailableSquares().get(index);
     }
 
-    // public String computerAnswer() {
-    //
-    // }
-
-    public void playGame(String player_answer, int index) {
+    public void playGame(int index) {
         pickFirstPlayer();
 
         while (board.checkWinner(currentPlayer)) {
-            getRandomQuestion();
+            selectQuestionAndAnswers();
 
-            if (checkAnswer(player_answer)) { // fix this shit
+            if (checkAnswer()) { // fix this shit
                 board.setSquare(index, currentPlayer);
                 currentPlayer.incCurrentScore(1);
                 currentPlayer.incMarkerCount();
