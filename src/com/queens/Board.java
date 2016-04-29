@@ -1,29 +1,26 @@
 package com.queens;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Board {
     private int[] board;
-    private int xCount;
-    private int oCount;
+    private ArrayList<Integer> availableSquares; // list available squares
+    private int secretSquare;
 
     private HashMap<String, Integer> winConfig;
 
     public Board() {
         board = new int[9];
-        xCount = 0;
-        oCount = 0;
         winConfig = new HashMap<>();
+        secretSquare = new Random().nextInt(9);
 
         populateWinConfig();
     }
 
-    public int getxCount() {
-        return xCount;
-    }
-
-    public int getoCount() {
-        return oCount;
+    public ArrayList<Integer> getAvailableSquares() {
+        return availableSquares;
     }
 
     public int[] getBoard() {
@@ -33,10 +30,12 @@ public class Board {
     public void setSquare(int index, Player currentPlayer) {
         this.board[index] = currentPlayer.getMarker();
 
-        if (currentPlayer.getMarker() == 1) {
-            xCount++;
-        } else {
-            oCount++;
+        for (Integer i = 0; i < board.length; i++) {
+            if (board[i] == 0 && !availableSquares.contains(i)) {
+                availableSquares.add(i);
+            } else if (availableSquares.contains(i)) {
+                availableSquares.remove(i);
+            }
         }
     }
 
@@ -49,21 +48,12 @@ public class Board {
      *
      * @return if Mr. X or Mrs. O is winner return 1 or 2 respectively else return 0
      */
-    public int checkWinner() {
-
+    public boolean checkWinner(Player currentPlayer) {
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
-        if (winConfig.containsKey(convertToString(1)) || xCount > 5) {
-            return 1;
-        }
+        return winConfig.containsKey(convertToString(currentPlayer.getMarker()))
+                || currentPlayer.getMarkerCount() >= 5;
 
-        // convert board of players marks into a string then check if it is a
-        // winning config or if the oCount is greater than 5.
-        if (winConfig.containsKey(convertToString(2)) || oCount > 5) {
-            return 2;
-        }
-
-        return 0;
     }
 
     /**

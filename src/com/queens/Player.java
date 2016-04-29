@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Player {
 
     private int marker;
+    private int markerCount;
     private int currentScore;
     private String username;
     private String password;
@@ -17,6 +18,14 @@ public class Player {
         this.username = username;
         this.password = password;
         this.highScores = highScores;
+    }
+
+    public int getMarkerCount() {
+        return markerCount;
+    }
+
+    public void incMarkerCount() {
+        this.markerCount++;
     }
 
     public int getMarker() {
@@ -39,8 +48,8 @@ public class Player {
         return currentScore;
     }
 
-    public void incCurrentScore() {
-        this.currentScore++;
+    public void incCurrentScore(int play) {
+        this.currentScore += play;
     }
 
     public ArrayList<Integer> getHighScores() {
