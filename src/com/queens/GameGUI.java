@@ -20,25 +20,27 @@ public class GameGUI extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Hollywood Squares");
         buttons = new Button[9];
+        trueBTN = new Button();
+        falseBTN = new Button();
 
-        Text question = new Text("Please select Square");
+        Text question = new Text("Please select a square");
 
-        Text response = new Text();
-        response.setVisible(false);
+        Text celebrityResponse = new Text();
+        celebrityResponse.setVisible(false);
 
-        Label correct = new Label("Correct");
-        correct.setVisible(false);
+        Label isTrueLabel = new Label();
+        isTrueLabel.setVisible(false);
 
         for (Integer i = 0; i < buttons.length; i++) {
             buttons[i] = new Button();
             buttons[i].setText(Integer.toString(i));
             buttons[i].setOnAction(e -> {
 
-                correct.setText(null);
+                isTrueLabel.setText(null);
                 game.selectQuestionAndAnswers();
                 question.setText(game.getQuestion());
-                response.setText(game.getCelebrityAnswer());
-                response.setVisible(true);
+                celebrityResponse.setText(game.getCelebrityAnswer());
+                celebrityResponse.setVisible(true);
 
                 trueBTN.setDisable(false);
                 falseBTN.setDisable(false);
@@ -49,31 +51,14 @@ public class GameGUI extends Application {
             buttons[i].setPrefSize(100, 100);
         }
 
-        trueBTN = new Button();
         trueBTN.setText("True");
-        trueBTN.setOnAction(e -> {
-            correct.setVisible(true);
-            if (game.checkAnswer())
-                correct.setText("Correct");
-            else
-                correct.setText("Wrong");
-
-            trueBTN.setDisable(true);
-            falseBTN.setDisable(true);
-            for (int j = 0; j < buttons.length; j++) {
-                buttons[j].setDisable(false);
-            }
-        });
         trueBTN.setPrefSize(100, 20);
-
-        falseBTN = new Button();
-        falseBTN.setText("False");
-        falseBTN.setOnAction(e -> {
-            correct.setVisible(true);
-            if (!game.checkAnswer())
-                correct.setText("Correct");
+        trueBTN.setOnAction(e -> {
+            isTrueLabel.setVisible(true);
+            if (game.checkAnswer())
+                isTrueLabel.setText("Correct");
             else
-                correct.setText("Wrong");
+                isTrueLabel.setText("Wrong");
 
             trueBTN.setDisable(true);
             falseBTN.setDisable(true);
@@ -82,53 +67,59 @@ public class GameGUI extends Application {
             }
         });
 
+        falseBTN.setText("False");
         falseBTN.setPrefSize(100, 20);
+        falseBTN.setOnAction(e -> {
+            isTrueLabel.setVisible(true);
+            if (!game.checkAnswer())
+                isTrueLabel.setText("Correct");
+            else
+                isTrueLabel.setText("Wrong");
 
-        VBox root_box = new VBox(20);
-        root_box.setAlignment(Pos.CENTER); // default TOP_LEFT
+            trueBTN.setDisable(true);
+            falseBTN.setDisable(true);
+            for (int j = 0; j < buttons.length; j++) {
+                buttons[j].setDisable(false);
+            }
+        });
 
-        HBox top = new HBox(20);
-        top.setAlignment(Pos.CENTER);
+        VBox rootBox = new VBox(20);
+        rootBox.setAlignment(Pos.CENTER); // default TOP_LEFT
 
-        HBox top2 = new HBox(20);
-        top.setAlignment(Pos.CENTER);
+        HBox questionBox = new HBox(20);
+        questionBox.setAlignment(Pos.CENTER);
 
-        HBox first_row = new HBox(20);
-        first_row.setAlignment(Pos.CENTER);
+        HBox responseBox = new HBox(20);
+        questionBox.setAlignment(Pos.CENTER);
 
-        HBox second_row = new HBox(20);
-        second_row.setAlignment(Pos.CENTER);
+        HBox firstRowSquares = new HBox(20);
+        firstRowSquares.setAlignment(Pos.CENTER);
 
-        HBox third_row = new HBox(20);
-        third_row.setAlignment(Pos.CENTER);
+        HBox secondRowSquares = new HBox(20);
+        secondRowSquares.setAlignment(Pos.CENTER);
 
-        HBox bottom = new HBox(20);
-        bottom.setAlignment(Pos.TOP_CENTER);
+        HBox thirdRowSquares = new HBox(20);
+        thirdRowSquares.setAlignment(Pos.CENTER);
 
-        int j = 3;
-        int k = 6;
-        for (int i = 0; i < 3; i++) {
-            first_row.getChildren().add(buttons[i]);
-            second_row.getChildren().add(buttons[j++]);
-            third_row.getChildren().add(buttons[k++]);
-        }
+        HBox trueOrFalseBox = new HBox(20);
+        trueOrFalseBox.setAlignment(Pos.TOP_CENTER);
 
-        top.getChildren().addAll(question);
-        top2.getChildren().addAll(response, correct);
-        bottom.getChildren().addAll(trueBTN, falseBTN);
-        root_box.getChildren().addAll(top, top2, first_row, second_row, third_row, bottom);
+        firstRowSquares.getChildren().addAll(buttons[0], buttons[1], buttons[2]);
+        secondRowSquares.getChildren().addAll(buttons[3], buttons[4], buttons[5]);
+        thirdRowSquares.getChildren().addAll(buttons[6], buttons[7], buttons[8]);
+        questionBox.getChildren().addAll(question);
+        responseBox.getChildren().addAll(celebrityResponse, isTrueLabel);
+        trueOrFalseBox.getChildren().addAll(trueBTN, falseBTN);
 
-        Scene scene = new Scene(root_box, 600, 500);
+        rootBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
+        Scene scene = new Scene(rootBox, 600, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    public void playGame(DataFile data, Player[] players) {
+    public void playGame(DataFile data, Player[] players, String[] args) {
         this.game = new Game(data, players);
-    }
-
-    public void show(String[] args) {
         launch(args);
     }
 }

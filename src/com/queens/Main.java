@@ -1,19 +1,19 @@
 package com.queens;
 
-import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
         DataFile data = new DataFile();
+
         // Login login = new Login(data);
         // Player[] players = login.getPlayers();
         Player[] players = new Player[2];
         players[0] = new Player("ciao", "goodbye", new ArrayList<>());
-        GameGUI a = new GameGUI();
-        a.playGame(data, players);
-        a.show(args);
+
+        GameGUI game = new GameGUI();
+        game.playGame(data, players, args);
 
         // try {
         //    data.addPlayer("john", "doe");
