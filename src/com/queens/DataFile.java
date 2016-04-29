@@ -22,7 +22,9 @@ public class DataFile {
     public DataFile() {
         players = new HashMap<>();
         questions = new HashMap<>();
+    }
 
+    public void getData() {
         try {
             playersData = new Scanner(new File("players_data.txt"));
             questionsData = new Scanner(new File("questions.txt"));
@@ -118,7 +120,7 @@ public class DataFile {
      * @param username for player
      * @param password for player
      * @throws ValidationException if username or password has whitespaces
-     * @throws Exception if username is already in hash map players
+     * @throws Exception           if username is already in hash map players
      */
     public void addPlayer(String username, String password) throws Exception {
         // check if username or password has whitespaces in it

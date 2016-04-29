@@ -6,14 +6,15 @@ public class Main {
 
     public static void main(String[] args) {
         DataFile data = new DataFile();
+        data.getData();
 
         // Login login = new Login(data);
         // Player[] players = login.getPlayers();
         Player[] players = new Player[2];
         players[0] = new Player("ciao", "goodbye", new ArrayList<>());
 
-        GameGUI game = new GameGUI();
-        game.playGame(data, players, args);
+        GameGUI gameGUI = new GameGUI();
+        gameGUI.playGame(data, players, args);
 
         // try {
         //    data.addPlayer("john", "doe");
