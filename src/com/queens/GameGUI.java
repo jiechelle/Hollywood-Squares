@@ -16,12 +16,14 @@ public class GameGUI extends Application {
     private Button[] buttons;
     private Button trueBTN;
     private Button falseBTN;
+    private Button endTurn;
 
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Hollywood Squares");
         buttons = new Button[9];
-        trueBTN = new Button();
-        falseBTN = new Button();
+        trueBTN = new Button("True");
+        falseBTN = new Button("False");
+        endTurn = new Button("End Turn");
 
         Text question = new Text("Please select a square");
 
@@ -34,12 +36,13 @@ public class GameGUI extends Application {
         for (Integer i = 0; i < buttons.length; i++) {
             buttons[i] = new Button();
             buttons[i].setText(Integer.toString(i));
+            buttons[i].setPrefSize(100, 100);
             buttons[i].setOnAction(e -> {
 
                 isTrueLabel.setText(null);
                 game.selectQuestionAndAnswers();
                 question.setText(game.getQuestion());
-                celebrityResponse.setText(game.getCelebrityAnswer());
+                celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
                 celebrityResponse.setVisible(true);
 
                 trueBTN.setDisable(false);
@@ -48,26 +51,25 @@ public class GameGUI extends Application {
                     buttons[j].setDisable(true);
                 }
             });
-            buttons[i].setPrefSize(100, 100);
         }
 
-        trueBTN.setText("True");
         trueBTN.setPrefSize(100, 20);
         trueBTN.setOnAction(e -> {
-            isTrueLabel.setVisible(true);
+
             if (game.checkAnswer())
                 isTrueLabel.setText("Correct");
             else
                 isTrueLabel.setText("Wrong");
+            isTrueLabel.setVisible(true);
 
-            trueBTN.setDisable(true);
-            falseBTN.setDisable(true);
+            trueBTN.setVisible(false);
+            falseBTN.setVisible(false);
+            endTurn.setVisible(true);
             for (int j = 0; j < buttons.length; j++) {
                 buttons[j].setDisable(false);
             }
         });
 
-        falseBTN.setText("False");
         falseBTN.setPrefSize(100, 20);
         falseBTN.setOnAction(e -> {
             isTrueLabel.setVisible(true);
@@ -76,11 +78,20 @@ public class GameGUI extends Application {
             else
                 isTrueLabel.setText("Wrong");
 
-            trueBTN.setDisable(true);
-            falseBTN.setDisable(true);
+            trueBTN.setVisible(false);
+            falseBTN.setVisible(false);
+            endTurn.setVisible(true);
             for (int j = 0; j < buttons.length; j++) {
                 buttons[j].setDisable(false);
             }
+        });
+
+        endTurn.setPrefSize(100, 20);
+        endTurn.setOnAction(e -> {
+            trueBTN.setVisible(true);
+            falseBTN.setVisible(true);
+            endTurn.setVisible(false);
+
         });
 
         VBox rootBox = new VBox(20);
@@ -109,7 +120,7 @@ public class GameGUI extends Application {
         thirdRowSquares.getChildren().addAll(buttons[6], buttons[7], buttons[8]);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isTrueLabel);
-        trueOrFalseBox.getChildren().addAll(trueBTN, falseBTN);
+        trueOrFalseBox.getChildren().addAll(trueBTN, falseBTN, endTurn);
 
         rootBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
