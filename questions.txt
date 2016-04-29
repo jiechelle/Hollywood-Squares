@@ -1,5 +1,5 @@
 Who is the first president?
-    Abe Lincoln, Washington, Obama, George Bush;
+    Washington, Abe Lincoln, Obama, George Bush;
 
 What is the scientific name for red blood cells?
     Erythrocytes, Leukocytes, Thrombocytes;

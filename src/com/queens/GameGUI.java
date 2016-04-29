@@ -12,17 +12,20 @@ import javafx.stage.Stage;
 
 public class GameGUI extends Application {
 
-    Button[] buttons;
+    private Game game;
+    private Button[] buttons;
 
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Title of Window");
         buttons = new Button[9];
 
+        // System.out.println(game.setSquare());
         for (Integer i = 0; i < buttons.length; i++) {
             buttons[i] = new Button();
             buttons[i].setText(Integer.toString(i));
             buttons[i].setOnAction(e -> {
-                buttons[0].setText("X");
+                // String t = game.setSquare();
+                buttons[0].setText("x");
                 System.out.println("body button");
             });
             buttons[i].setPrefSize(100, 100);
@@ -86,7 +89,8 @@ public class GameGUI extends Application {
         primaryStage.show();
     }
 
-    public void show(String[] args) {
+    public void playGame(Game game, String[] args) {
+        this.game = game;
         launch(args);
     }
 }

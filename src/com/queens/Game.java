@@ -8,6 +8,7 @@ public class Game {
     private Board board;
     private Player player1;
     private Player player2;
+    private boolean playerTurn;
 
     public Game(DataFile data, Player[] players) {
         this.data = data;
@@ -20,9 +21,26 @@ public class Game {
         Random randomNum = new Random();
         int result = randomNum.nextInt(2);
         if (result == 0) {
+            playerTurn = true;
             return player1;
         } else {
+            playerTurn = false;
             return player2;
         }
     }
+
+    public String setSquare() {
+        if (playerTurn) {
+            player1.incCurrentScore();
+            return "x";
+        } else {
+            player2.incCurrentScore();
+            return "o";
+        }
+    }
+
+    public void nextPlayer() {
+        playerTurn = !playerTurn;
+    }
+
 }
