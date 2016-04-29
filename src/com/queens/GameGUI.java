@@ -55,6 +55,8 @@ public class GameGUI extends Application {
                 for (int j = 0; j < guiBoard.length; j++) {
                     guiBoard[j].setDisable(true);
                 }
+
+                System.out.println(selectedSqaure);
             });
         }
 
@@ -75,7 +77,7 @@ public class GameGUI extends Application {
             agree.setVisible(true);
             disagree.setVisible(true);
             endTurn.setVisible(false);
-            game.nextPlayer();
+            selectedSqaure = game.nextPlayer();
         });
 
         VBox rootBox = new VBox(20);
