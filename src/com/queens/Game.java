@@ -21,6 +21,10 @@ public class Game {
         player2 = players[1];
     }
 
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     public Player pickFirstPlayer() {
         Random randomNum = new Random();
         int result = randomNum.nextInt(2);
@@ -34,12 +38,17 @@ public class Game {
         return currentPlayer;
     }
 
-    public void nextPlayer() {
+    public int nextPlayer() {
         if (currentPlayer == player1) {
             currentPlayer = player2;
+            if (currentPlayer == null && setSquare(computerRasponse(), computerSelectSquare())) {
+                return computerSelectSquare();
+            }
         } else {
             currentPlayer = player1;
         }
+
+        return -1;
     }
 
     public void selectQuestionAndAnswers() {
@@ -61,8 +70,51 @@ public class Game {
         return celebrityAnswer;
     }
 
-    public boolean checkAnswer() {
+    public boolean checkCelebAnswer() {
         return celebrityAnswer.equals(answers[0]);
+    }
+
+    // todo fix this shit
+    // remove resetSquare and setSquare only if the answer
+    // was correct
+    public boolean setSquare(boolean playerAnswer, int index) {
+        if (playerAnswer && checkCelebAnswer()) {
+            board.setSquare(index, currentPlayer);
+            currentPlayer.incCurrentScore(1);
+            currentPlayer.incMarkerCount();
+            return true;
+        }
+
+        // if (checkCelebAnswer()) { // fix this shit
+        //     board.setSquare(index, currentPlayer);
+        //     currentPlayer.incCurrentScore(1);
+        //     currentPlayer.incMarkerCount();
+        //     return true;
+        // } else {
+        //     nextPlayer();
+        //     board.setSquare(index, currentPlayer);
+        //     if (board.checkWinner(currentPlayer)) {
+        //         board.resetSquare(index);
+        //         return false;
+        //     } else {
+        //         currentPlayer.incCurrentScore(1);
+        //         currentPlayer.incMarkerCount();
+        //         return true;
+        //     }
+        // }
+
+        return false;
+    }
+
+    public boolean checkWinner() {
+        if (board.checkWinner(currentPlayer)) {
+            player1.addHighScore();
+            player2.addHighScore();
+            data.writePlayers();
+            return true;
+        }
+
+        return false;
     }
 
     public int computerSelectSquare() {
@@ -70,27 +122,14 @@ public class Game {
         return board.getAvailableSquares().get(index);
     }
 
-    public void playGame(int index) {
-        pickFirstPlayer();
+    public boolean computerRasponse() {
+        Random randomNum = new Random();
+        int result = randomNum.nextInt(2);
 
-        while (board.checkWinner(currentPlayer)) {
-            selectQuestionAndAnswers();
-
-            if (checkAnswer()) { // fix this shit
-                board.setSquare(index, currentPlayer);
-                currentPlayer.incCurrentScore(1);
-                currentPlayer.incMarkerCount();
-            } else {
-                nextPlayer();
-                board.setSquare(index, currentPlayer);
-                if (board.checkWinner(currentPlayer)) {
-                    board.resetSquare(index);
-                } else {
-                    currentPlayer.incCurrentScore(1);
-                    currentPlayer.incMarkerCount();
-                }
-            }
-
+        if (result == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -101,9 +140,4 @@ public class Game {
     // public void endGame() {
     //
     // }
-
-
-
-
-
 }

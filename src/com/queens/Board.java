@@ -51,7 +51,7 @@ public class Board {
     public boolean checkWinner(Player currentPlayer) {
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
-        return winConfig.containsKey(convertToString(currentPlayer.getMarker()))
+        return winConfig.containsKey(convertToString(currentPlayer))
                 || currentPlayer.getMarkerCount() >= 5;
 
     }
@@ -78,14 +78,14 @@ public class Board {
     /**
      * Convert board into a string of 1's and 0's
      *
-     * @param player's mark to convert string
+     * @param currentPlayer mark to convert string
      * @return a string of the board eg. "10110010"
      */
-    private String convertToString(int player) {
+    private String convertToString(Player currentPlayer) {
         String playerMarks = "";
 
         for (int i : board) {
-            if (i == player) {
+            if (i == currentPlayer.getMarker()) {
                 playerMarks += "1";
             } else {
                 playerMarks += "0";

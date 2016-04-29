@@ -56,7 +56,7 @@ public class Player {
         return highScores;
     }
 
-    public void addHighScore(int score) {
-        highScores.add(score);
+    public void addHighScore() {
+        highScores.add(currentScore);
     }
 }
