@@ -9,7 +9,7 @@ public class Board {
     private ArrayList<Integer> availableSquares; // list available squares
     private int secretSquare;
 
-    private HashMap<String, Integer> winConfig;
+    private HashMap<String, Boolean> winConfig;
 
     public Board() {
         board = new int[9];
@@ -44,14 +44,14 @@ public class Board {
     }
 
     /**
-     * Check if player has won the game
+     * Check if current player has won the game
      *
-     * @return if Mr. X or Mrs. O is winner return 1 or 2 respectively else return 0
+     * @return true or false depending on if currentPlayer has one
      */
-    public boolean checkWinner(Player currentPlayer) {
+    public boolean checkCurrentPlayerIsWinner(Player currentPlayer) {
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
-        return winConfig.containsKey(convertToString(currentPlayer))
+        return winConfig.containsKey(convertPlayerMarkers(currentPlayer))
                 || currentPlayer.getMarkerCount() >= 5;
 
     }
@@ -81,7 +81,7 @@ public class Board {
      * @param currentPlayer mark to convert string
      * @return a string of the board eg. "10110010"
      */
-    private String convertToString(Player currentPlayer) {
+    private String convertPlayerMarkers(Player currentPlayer) {
         String playerMarks = "";
 
         for (int i : board) {

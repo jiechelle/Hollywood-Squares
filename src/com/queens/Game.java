@@ -93,7 +93,7 @@ public class Game {
         // } else {
         //     nextPlayer();
         //     board.setSquare(index, currentPlayer);
-        //     if (board.checkWinner(currentPlayer)) {
+        //     if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
         //         board.resetSquare(index);
         //         return false;
         //     } else {
@@ -107,7 +107,7 @@ public class Game {
     }
 
     public boolean checkWinner() {
-        if (board.checkWinner(currentPlayer)) {
+        if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
             player1.addHighScore();
             player2.addHighScore();
             data.writePlayers();
