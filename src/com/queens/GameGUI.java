@@ -110,7 +110,7 @@ public class GameGUI extends Application {
             ((Control) e.getSource()).setVisible(false);
         });
 
-        ///LOGIN SCENE CREATION (PANEL)
+        ///LOGIN PANEL FRAME CREATION
         GridPane loginPane = new GridPane();
         loginPane.setAlignment(Pos.CENTER);
         loginPane.setHgap(10);
@@ -179,44 +179,55 @@ public class GameGUI extends Application {
         gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
         Scene gameScene = new Scene(gameBox, 600, 500);
-        Scene loginScene = new Scene(loginPane, 300,300);
+        Scene loginScene = new Scene(loginPane, 300, 300);
 
         primaryStage.setTitle("Hollywood Squares");
         primaryStage.setScene(loginScene);
         primaryStage.show();
 
-        //TO DO: First Player Login-> Select 1 or 2 Players -> if(1 player) start game else if(2 p) second player login-> login
-        //login button press action
-
+        //LOGIN button action
         logBtn.setOnAction(e -> {
             String tempUser = userField.getText();
             String tempPass = pwField.getText();
-
-            if(data.checkPlayerCredentials(tempUser,tempPass)) {
+            if (data.checkPlayerCredentials(tempUser, tempPass)) {
                 System.out.println("Logged in!");
-            }
-            else System.out.println("Either username or password is incorrect. Are you registered?");
+            } else System.out.println("Either username or password is incorrect. Are you registered?");
 
-            //userField.clear();
             pwField.clear();
         });
 
-        //register button press action
+        //REGISTER button action
         rBtn.setOnAction(e -> {
-            //if login already exists, notify user
-            //else create new user with login and pw
-            theStage.setScene(gameScene);
-            System.out.println("Hello World!");
-        });
+            String tempUser = userField.getText();
+            String tempPass = pwField.getText();
 
+            if (data.checkPlayerName(tempUser)) {
+                System.out.println("USER NAME ALREADY TAKEN");
+                pwField.clear();
+                userField.clear();
+            } else if (tempUser.isEmpty() || tempPass.isEmpty()) System.out.println("Text fields cannot be empty!");
+
+            else if (!data.checkPlayerCredentials(tempUser, tempPass) && !tempUser.isEmpty() && !tempPass.isEmpty()) {
+                try {
+                    data.addPlayer(tempUser, tempPass);
+                    System.out.println("Account " + tempUser + " successfully created");
+                    data.writePlayers();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        //use this to switch scene to game board
+        //theStage.setScene(gameScene);
     }
 
     public void playGame(DataFile data, String[] args) {
 
         this.data = data;
 
-
+        //fix get players after login completed
         this.getPlayers();
+
         this.game = new Game(data, players);
         launch(args);
     }

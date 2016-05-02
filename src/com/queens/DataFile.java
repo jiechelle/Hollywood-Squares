@@ -114,14 +114,24 @@ public class DataFile {
         return players.containsKey(username) && players.get(username).getPassword().equals(password);
     }
 
-    /**
-     * Add player to hash map players
-     *
-     * @param username for player
-     * @param password for player
-     * @throws ValidationException if username or password has whitespaces
-     * @throws Exception           if username is already in hash map players
-     */
+    public boolean checkPlayerName(String username){
+        return players.containsKey(username);
+
+    }
+
+    public boolean checkPlayerPass(String password) {
+        return players.containsKey(password);
+    }
+
+
+        /**
+         * Add player to hash map players
+         *
+         * @param username for player
+         * @param password for player
+         * @throws ValidationException if username or password has whitespaces
+         * @throws Exception           if username is already in hash map players
+         */
     public void addPlayer(String username, String password) throws Exception {
         // check if username or password has whitespaces in it
         if (username.matches(".*\\s+.*") || password.matches(".*\\s+.*")) {
@@ -130,7 +140,7 @@ public class DataFile {
 
         // check if username is in players if not add him
         if (players.containsKey(username)) {
-            throw new Exception("Username already in data playersfilePath");
+            throw new Exception("Username already in data players filePath");
         }
 
         players.put(username, new Player(username, password, new ArrayList<>()));
