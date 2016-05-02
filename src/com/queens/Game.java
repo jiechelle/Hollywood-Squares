@@ -77,14 +77,13 @@ public class Game {
     }
 
     public int setSquare(boolean playerAnswer, int index) {
-        if (playerAnswer && checkCelebAnswer()) {
+        if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
             currentPlayer.incMarkerCount();
             return currentPlayer.getMarker();
         } else {
             if (currentPlayer == player1) {
-                System.out.println("here");
                 board.setSquare(index, player2);
                 if (board.checkCurrentPlayerIsWinner(player2)) {
                     board.resetSquare(index);
@@ -106,24 +105,6 @@ public class Game {
                 }
             }
         }
-
-        // if (checkCelebAnswer()) { // fix this shit
-        //     board.setSquare(index, currentPlayer);
-        //     currentPlayer.incCurrentScore(1);
-        //     currentPlayer.incMarkerCount();
-        //     return true;
-        // } else {
-        //     nextPlayer();
-        //     board.setSquare(index, currentPlayer);
-        //     if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
-        //         board.resetSquare(index);
-        //         return false;
-        //     } else {
-        //         currentPlayer.incCurrentScore(1);
-        //         currentPlayer.incMarkerCount();
-        //         return true;
-        //     }
-        // }
 
         return 0;
     }

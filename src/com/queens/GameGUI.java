@@ -222,7 +222,7 @@ public class GameGUI extends Application {
             }
         });
         //use this to switch scene to game board
-        theStage.setScene(gameScene);
+        // theStage.setScene(gameScene);
     }
 
     public void playGame(DataFile data, String[] args) {
