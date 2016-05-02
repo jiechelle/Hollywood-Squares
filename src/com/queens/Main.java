@@ -8,13 +8,16 @@ public class Main {
         DataFile data = new DataFile();
         data.getData();
 
+       // data.checkPlayerCredentials
+
         // Login login = new Login(data);
         // Player[] players = login.getPlayers();
-        Player[] players = new Player[2];
-        players[0] = new Player("ciao", "goodbye", new ArrayList<>());
+        //Player[] players = new Player[2];
+        //players[0] = new Player("ciao", "goodbye", new ArrayList<>());
+        //players[1] = new Player("ciao", "goodbye", new ArrayList<>());
 
         GameGUI gameGUI = new GameGUI();
-        gameGUI.playGame(data, players, args);
+        gameGUI.playGame(data, args);
 
         // try {
         //    data.addPlayer("john", "doe");
