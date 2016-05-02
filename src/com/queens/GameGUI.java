@@ -111,6 +111,12 @@ public class GameGUI extends Application {
             else
                 currerntPlayer.setText("Player 2 ");
 
+            for (int j = 0; j < guiBoard.length; j++) {
+                if (guiBoard[j].getText().equals("")) {
+                    guiBoard[j].setDisable(false);
+                }
+            }
+
             ((Control) e.getSource()).setVisible(false);
         });
 
@@ -222,7 +228,7 @@ public class GameGUI extends Application {
             }
         });
         //use this to switch scene to game board
-        // theStage.setScene(gameScene);
+        theStage.setScene(gameScene);
     }
 
     public void playGame(DataFile data, String[] args) {
@@ -252,18 +258,16 @@ public class GameGUI extends Application {
         disagree.setVisible(false);
         endTurn.setVisible(true);
 
+        // Disable all buttons on guiBoard when agree or disagree is pressed
         for (int j = 0; j < guiBoard.length; j++) {
+            guiBoard[j].setDisable(true);
+
             if (j == selectedSquare && answer != 0) {
                 if (answer == 1)
                     guiBoard[j].setText("X");
                 else
                     guiBoard[j].setText("O");
             }
-
-            if (guiBoard[j].getText().equals("")) {
-                guiBoard[j].setDisable(false);
-            }
-
         }
     }
 }
