@@ -106,7 +106,7 @@ public class Game {
         return false;
     }
 
-    public boolean checkWinner() {
+    public boolean checkCurrentPlayerIsWinner() {
         if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
             player1.addHighScore();
             player2.addHighScore();

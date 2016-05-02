@@ -1,7 +1,6 @@
 package com.queens;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,17 +8,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Control;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class GameGUI extends Application {
@@ -35,7 +31,7 @@ public class GameGUI extends Application {
     private Text celebrityResponse;
     private Text isCorrect;
     private boolean playerAnswer;
-    private int selectedSqaure;
+    public int selectedSqaure;
 
     Stage theStage;
     static DataFile data;
@@ -47,6 +43,7 @@ public class GameGUI extends Application {
         agree = new Button("True");
         disagree = new Button("False");
         endTurn = new Button("End Turn");
+        endTurn.setVisible(false);
 
         question = new Text("Please select a square");
 
@@ -60,9 +57,13 @@ public class GameGUI extends Application {
             guiBoard[i] = new Button();
             guiBoard[i].setText(Integer.toString(i));
             guiBoard[i].setPrefSize(100, 100);
+            // guiBoard[i].addEventHandler(MouseEvent.MOUSE_CLICKED, new MyEventHandler());
+            guiBoard[i].setId(Integer.toString(i));
+
             guiBoard[i].setOnAction(e -> {
 
-                // selectedSqaure = FIGURE THIS SHIT OUT
+                selectedSqaure = Integer.parseInt(( (Control) e.getSource()).getId());
+                System.out.println(selectedSqaure);
                 isCorrect.setText(null);
                 game.selectQuestionAndAnswers();
                 question.setText(game.getQuestion());
@@ -74,29 +75,33 @@ public class GameGUI extends Application {
                 for (int j = 0; j < guiBoard.length; j++) {
                     guiBoard[j].setDisable(true);
                 }
-
-                System.out.println(selectedSqaure);
             });
         }
 
         agree.setPrefSize(100, 20);
         agree.setOnAction(e -> {
+            endTurn.setVisible(true);
             playerAnswer = true;
             playerFeedback(game.setSquare(playerAnswer, selectedSqaure));
         });
 
         disagree.setPrefSize(100, 20);
         disagree.setOnAction(e -> {
-             playerAnswer = false;
+            endTurn.setVisible(true);
+            playerAnswer = false;
             playerFeedback(!game.setSquare(playerAnswer, selectedSqaure));
         });
 
         endTurn.setPrefSize(100, 20);
         endTurn.setOnAction(e -> {
+            question.setText("Select Square");
+            celebrityResponse.setVisible(false);
+            isCorrect.setVisible(false);
             agree.setVisible(true);
             disagree.setVisible(true);
             endTurn.setVisible(false);
             selectedSqaure = game.nextPlayer();
+            ((Control) e.getSource()).setVisible(false);
         });
 
         ///LOGIN SCENE CREATION (PANEL)
@@ -229,4 +234,12 @@ public class GameGUI extends Application {
             guiBoard[j].setDisable(false);
         }
     }
+
+    // private class MyEventHandler implements EventHandler<Event> {
+    //     @Override
+    //     public void handle(Event evt) {
+    //         selectedSqaure = Integer.parseInt(((Control)evt.getSource()).getId());
+    //         System.out.println(selectedSqaure);
+    //     }
+    // }
 }
