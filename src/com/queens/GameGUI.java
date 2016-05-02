@@ -4,12 +4,8 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.Control;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -17,6 +13,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class GameGUI extends Application {
 
@@ -30,14 +27,16 @@ public class GameGUI extends Application {
     private Text question;
     private Text celebrityResponse;
     private Text isCorrect;
-    private Text currerntPlayer;
+    private Text currentPlayer;
     private boolean playerAnswer;
     private int selectedSquare;
 
     Stage theStage;
     static DataFile data;
+    String[] args;
 
     public void start(Stage primaryStage) {
+
         theStage = primaryStage;
         game.pickFirstPlayer();
         guiBoard = new Button[9];
@@ -57,9 +56,9 @@ public class GameGUI extends Application {
         isCorrect.setVisible(false);
 
         if (game.getCurrentPlayer().getMarker() == 1)
-            currerntPlayer = new Text("Player 1 ");
+            currentPlayer = new Text("Player 1 ");
         else
-            currerntPlayer = new Text("Player 2 ");
+            currentPlayer = new Text("Player 2 ");
 
         for (Integer i = 0; i < guiBoard.length; i++) {
             guiBoard[i] = new Button();
@@ -68,7 +67,7 @@ public class GameGUI extends Application {
 
             guiBoard[i].setOnAction(e -> {
 
-                selectedSquare = Integer.parseInt(( (Control) e.getSource()).getId());
+                selectedSquare = Integer.parseInt(((Control) e.getSource()).getId());
                 game.selectQuestionAndAnswers();
                 question.setText(game.getQuestion());
                 celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
@@ -107,9 +106,9 @@ public class GameGUI extends Application {
             game.nextPlayer();
 
             if (game.getCurrentPlayer().getMarker() == 1)
-                currerntPlayer.setText("Player 1 ");
+                currentPlayer.setText("Player 1 ");
             else
-                currerntPlayer.setText("Player 2 ");
+                currentPlayer.setText("Player 2 ");
 
             for (int j = 0; j < guiBoard.length; j++) {
                 if (guiBoard[j].getText().equals("")) {
@@ -132,8 +131,19 @@ public class GameGUI extends Application {
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         loginPane.add(scenetitle, 0, 0, 2, 1);
 
+        //POP UP MESSAGES
+        Alert loginAlert = new Alert(Alert.AlertType.WARNING);
+        Alert selectAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        ButtonType buttonTypeOne = new ButtonType("One");
+        ButtonType buttonTypeTwo = new ButtonType("Two");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        selectAlert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+        selectAlert.setTitle("Hollywood Squares");
+        selectAlert.setHeaderText("");
+        selectAlert.setContentText("Select number of players: ");
+
         //USER NAME BOX
-        Label userName = new Label("User Name:");
+        Label userName = new Label("Username:");
         loginPane.add(userName, 0, 1);
         TextField userField = new TextField();
         loginPane.add(userField, 1, 1);
@@ -184,12 +194,12 @@ public class GameGUI extends Application {
         thirdRowSquares.getChildren().addAll(guiBoard[6], guiBoard[7], guiBoard[8]);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
-        trueOrFalseBox.getChildren().addAll(currerntPlayer, agree, disagree, endTurn);
+        trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn);
 
         gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
         Scene gameScene = new Scene(gameBox, 600, 500);
-        Scene loginScene = new Scene(loginPane, 300, 300);
+        Scene loginScene = new Scene(loginPane, 300, 270);
 
         primaryStage.setTitle("Hollywood Squares");
         primaryStage.setScene(loginScene);
@@ -199,11 +209,53 @@ public class GameGUI extends Application {
         logBtn.setOnAction(e -> {
             String tempUser = userField.getText();
             String tempPass = pwField.getText();
-            if (data.checkPlayerCredentials(tempUser, tempPass)) {
-                System.out.println("Logged in!");
-            } else System.out.println("Either username or password is incorrect. Are you registered?");
 
-            pwField.clear();
+            if (data.checkPlayerCredentials(tempUser, tempPass)) {
+
+                //assign players to array depending on case 1 or case 2
+                if (players[0] == null)
+                    players[0] = new Player("hey", "hello", new ArrayList<>());
+                else if (players[1] == null && players[0] != null)
+                    players[1] = new Player("test", "ting", new ArrayList<>());
+
+                //TWO PLAYERS LOGGED IN
+                if (players[1] != null && players[0] != null) {
+                    loginAlert.setTitle("Game Start");
+                    loginAlert.setHeaderText("Two player game ");
+                    loginAlert.setContentText("Press OK to start!");
+                    loginAlert.showAndWait();
+
+                    theStage.setScene(gameScene);
+                }
+
+                //PLayer 1 logged in, BEGIN SELECTION SEQUENCE
+                if (players[0] != null && players[1] == null) {
+                    Optional<ButtonType> result = selectAlert.showAndWait();
+                    if (result.get() == buttonTypeOne) {
+                        loginAlert.setTitle("Game Start");
+                        loginAlert.setHeaderText("One player game ");
+                        loginAlert.setContentText("Press OK to start!");
+                        loginAlert.showAndWait();
+                        theStage.setScene(gameScene);
+                        //START GAME WITH PLAYER 1 VS CPU
+                    } else if (result.get() == buttonTypeTwo) {
+                        userField.clear();
+                        pwField.clear();
+                        scenetitle.setText("Player 2 - Please Login");
+                        //GO BACK TO LOGIN SCREEN AND REGISTER PLAYER 2
+                    } else {
+                        //USER PRESSED X OR CANCEL, reset player 0
+                        players[0] = null;
+                    }
+                }
+
+            } else {
+                loginAlert.setTitle("Login Error");
+                loginAlert.setHeaderText("Username or password incorrect");
+                loginAlert.setContentText("Are you registered?");
+                loginAlert.showAndWait();
+                pwField.clear();
+            }
         });
 
         //REGISTER button action
@@ -211,13 +263,22 @@ public class GameGUI extends Application {
             String tempUser = userField.getText();
             String tempPass = pwField.getText();
 
+            //USER NAME TAKEN
             if (data.checkPlayerName(tempUser)) {
-                System.out.println("USER NAME ALREADY TAKEN");
+                loginAlert.setTitle("Registration Error");
+                loginAlert.setHeaderText("Username already taken");
+                loginAlert.setContentText("Please try again");
+                loginAlert.showAndWait();
                 pwField.clear();
                 userField.clear();
-            } else if (tempUser.isEmpty() || tempPass.isEmpty()) System.out.println("Text fields cannot be empty!");
-
-            else if (!data.checkPlayerCredentials(tempUser, tempPass) && !tempUser.isEmpty() && !tempPass.isEmpty()) {
+            //BLANK FIELDS
+            } else if (tempUser.isEmpty() || tempPass.isEmpty()) {
+                loginAlert.setTitle("Registration Error");
+                loginAlert.setHeaderText("Text fields cannot be empty!");
+                loginAlert.setContentText("Make sure to fill in a username and password");
+                loginAlert.showAndWait();
+            //SUCCESSFUL REGISTRATION
+            } else if (!data.checkPlayerCredentials(tempUser, tempPass) && !tempUser.isEmpty() && !tempPass.isEmpty()) {
                 try {
                     data.addPlayer(tempUser, tempPass);
                     System.out.println("Account " + tempUser + " successfully created");
@@ -227,19 +288,23 @@ public class GameGUI extends Application {
                 }
             }
         });
-        //use this to switch scene to game board
-        theStage.setScene(gameScene);
     }
 
     public void playGame(DataFile data, String[] args) {
 
+
         this.data = data;
+        this.args = args;
 
         //fix get players after login completed
-        this.getPlayers();
+        //***starting new game or caling game funcs before logging players in will result in big issues, need to fix***
+        //need a way to delay game functions before login occurs and records player0 and player1
 
+        this.getPlayers();
         this.game = new Game(data, players);
+
         launch(args);
+
     }
 
     public void getPlayers() {

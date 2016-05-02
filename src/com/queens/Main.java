@@ -17,6 +17,7 @@ public class Main {
         //players[1] = new Player("ciao", "goodbye", new ArrayList<>());
 
         GameGUI gameGUI = new GameGUI();
+        gameGUI.getPlayers();
         gameGUI.playGame(data, args);
 
         // try {

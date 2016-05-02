@@ -119,11 +119,6 @@ public class DataFile {
 
     }
 
-    public boolean checkPlayerPass(String password) {
-        return players.containsKey(password);
-    }
-
-
         /**
          * Add player to hash map players
          *
