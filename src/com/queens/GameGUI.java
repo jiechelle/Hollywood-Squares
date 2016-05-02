@@ -30,6 +30,7 @@ public class GameGUI extends Application {
     private Text question;
     private Text celebrityResponse;
     private Text isCorrect;
+    private Text currerntPlayer;
     private boolean playerAnswer;
     private int selectedSquare;
 
@@ -48,16 +49,17 @@ public class GameGUI extends Application {
         disagree.setVisible(false);
         endTurn.setVisible(false);
 
-        if (game.getCurrentPlayer().getMarker() == 1)
-            question = new Text("Player 1 turn, please select a square");
-        else
-            question = new Text("Player 2 turn, please select a square");
-
+        question = new Text("Please select a square");
         celebrityResponse = new Text();
         celebrityResponse.setVisible(false);
 
         isCorrect = new Text();
         isCorrect.setVisible(false);
+
+        if (game.getCurrentPlayer().getMarker() == 1)
+            currerntPlayer = new Text("Player 1 ");
+        else
+            currerntPlayer = new Text("Player 2 ");
 
         for (Integer i = 0; i < guiBoard.length; i++) {
             guiBoard[i] = new Button();
@@ -96,17 +98,19 @@ public class GameGUI extends Application {
 
         endTurn.setPrefSize(100, 20);
         endTurn.setOnAction(e -> {
-            if (game.getCurrentPlayer().getMarker() == 1)
-                question.setText("Player 1 turn, please select a square");
-            else
-                question.setText("Player 2 turn, please select a square");
-
+            question.setText("Please select a square");
             celebrityResponse.setVisible(false);
             isCorrect.setVisible(false);
             agree.setVisible(true);
             disagree.setVisible(true);
             endTurn.setVisible(false);
             game.nextPlayer();
+
+            if (game.getCurrentPlayer().getMarker() == 1)
+                currerntPlayer.setText("Player 1 ");
+            else
+                currerntPlayer.setText("Player 2 ");
+
             ((Control) e.getSource()).setVisible(false);
         });
 
@@ -174,7 +178,7 @@ public class GameGUI extends Application {
         thirdRowSquares.getChildren().addAll(guiBoard[6], guiBoard[7], guiBoard[8]);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
-        trueOrFalseBox.getChildren().addAll(agree, disagree, endTurn);
+        trueOrFalseBox.getChildren().addAll(currerntPlayer, agree, disagree, endTurn);
 
         gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
@@ -218,7 +222,7 @@ public class GameGUI extends Application {
             }
         });
         //use this to switch scene to game board
-        //theStage.setScene(gameScene);
+        theStage.setScene(gameScene);
     }
 
     public void playGame(DataFile data, String[] args) {
