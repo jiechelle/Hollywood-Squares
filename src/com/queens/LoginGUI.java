@@ -22,7 +22,6 @@ public class LoginGUI {
     static DataFile data;
     private GameGUI gameGUI;
 
-
     public LoginGUI(DataFile data, Player[] players) {
         this.data = data;
         this.players = players;
@@ -90,9 +89,10 @@ public class LoginGUI {
 
                 //assign players to array depending on case 1 or case 2
                 if (players[0] == null)
-                    players[0] = new Player("hey", "hello", new ArrayList<>());
+                    players[0] = data.getPlayer(tempUser);
+                    //players[0] = new Player("hey", "hello", new ArrayList<>());
                 else if (players[1] == null && players[0] != null)
-                    players[1] = new Player("test", "ting", new ArrayList<>());
+                    players[1] = data.getPlayer(tempUser);
 
                 //TWO PLAYERS LOGGED IN
                 if (players[1] != null && players[0] != null) {
