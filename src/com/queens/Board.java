@@ -17,6 +17,7 @@ public class Board {
         secretSquare = new Random().nextInt(9);
         availableSquares = new ArrayList<>();
 
+        checkAvailableSquares();
         populateWinConfig();
     }
 
@@ -47,6 +48,11 @@ public class Board {
                 availableSquares.remove(i);
             }
         }
+
+        for (int i = 0; i < board.length; i++)
+            System.out.print(board[i]);
+
+        System.out.println();
     }
 
     public void resetSquare(int index) {

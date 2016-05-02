@@ -31,7 +31,7 @@ public class GameGUI extends Application {
     private Text celebrityResponse;
     private Text isCorrect;
     private boolean playerAnswer;
-    public int selectedSqaure;
+    private int selectedSquare;
 
     Stage theStage;
     static DataFile data;
@@ -43,9 +43,15 @@ public class GameGUI extends Application {
         agree = new Button("True");
         disagree = new Button("False");
         endTurn = new Button("End Turn");
+
+        agree.setVisible(false);
+        disagree.setVisible(false);
         endTurn.setVisible(false);
 
-        question = new Text("Please select a square");
+        if (game.getCurrentPlayer().getMarker() == 1)
+            question = new Text("Player 1 turn, please select a square");
+        else
+            question = new Text("Player 2 turn, please select a square");
 
         celebrityResponse = new Text();
         celebrityResponse.setVisible(false);
@@ -55,23 +61,19 @@ public class GameGUI extends Application {
 
         for (Integer i = 0; i < guiBoard.length; i++) {
             guiBoard[i] = new Button();
-            guiBoard[i].setText(Integer.toString(i));
             guiBoard[i].setPrefSize(100, 100);
-            // guiBoard[i].addEventHandler(MouseEvent.MOUSE_CLICKED, new MyEventHandler());
             guiBoard[i].setId(Integer.toString(i));
 
             guiBoard[i].setOnAction(e -> {
 
-                selectedSqaure = Integer.parseInt(( (Control) e.getSource()).getId());
-                System.out.println(selectedSqaure);
-                isCorrect.setText(null);
+                selectedSquare = Integer.parseInt(( (Control) e.getSource()).getId());
                 game.selectQuestionAndAnswers();
                 question.setText(game.getQuestion());
                 celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
                 celebrityResponse.setVisible(true);
 
-                agree.setDisable(false);
-                disagree.setDisable(false);
+                agree.setVisible(true);
+                disagree.setVisible(true);
                 for (int j = 0; j < guiBoard.length; j++) {
                     guiBoard[j].setDisable(true);
                 }
@@ -82,25 +84,29 @@ public class GameGUI extends Application {
         agree.setOnAction(e -> {
             endTurn.setVisible(true);
             playerAnswer = true;
-            playerFeedback(game.setSquare(playerAnswer, selectedSqaure));
+            playerFeedback(game.setSquare(playerAnswer, selectedSquare));
         });
 
         disagree.setPrefSize(100, 20);
         disagree.setOnAction(e -> {
             endTurn.setVisible(true);
             playerAnswer = false;
-            playerFeedback(!game.setSquare(playerAnswer, selectedSqaure));
+            playerFeedback(game.setSquare(playerAnswer, selectedSquare));
         });
 
         endTurn.setPrefSize(100, 20);
         endTurn.setOnAction(e -> {
-            question.setText("Select Square");
+            if (game.getCurrentPlayer().getMarker() == 1)
+                question.setText("Player 1 turn, please select a square");
+            else
+                question.setText("Player 2 turn, please select a square");
+
             celebrityResponse.setVisible(false);
             isCorrect.setVisible(false);
             agree.setVisible(true);
             disagree.setVisible(true);
             endTurn.setVisible(false);
-            selectedSqaure = game.nextPlayer();
+            game.nextPlayer();
             ((Control) e.getSource()).setVisible(false);
         });
 
@@ -220,26 +226,29 @@ public class GameGUI extends Application {
         players[1] = new Player("abc", "efg", new ArrayList<>());
     }
 
-    public void playerFeedback(boolean answer) {
-        if (answer)
+    public void playerFeedback(int answer) {
+        if (answer == game.getCurrentPlayer().getMarker())
             isCorrect.setText("Correct");
         else
             isCorrect.setText("Wrong");
-        isCorrect.setVisible(true);
 
+        isCorrect.setVisible(true);
         agree.setVisible(false);
         disagree.setVisible(false);
         endTurn.setVisible(true);
+
         for (int j = 0; j < guiBoard.length; j++) {
-            guiBoard[j].setDisable(false);
+            if (j == selectedSquare && answer != 0) {
+                if (answer == 1)
+                    guiBoard[j].setText("X");
+                else
+                    guiBoard[j].setText("O");
+            }
+
+            if (guiBoard[j].getText().equals("")) {
+                guiBoard[j].setDisable(false);
+            }
+
         }
     }
-
-    // private class MyEventHandler implements EventHandler<Event> {
-    //     @Override
-    //     public void handle(Event evt) {
-    //         selectedSqaure = Integer.parseInt(((Control)evt.getSource()).getId());
-    //         System.out.println(selectedSqaure);
-    //     }
-    // }
 }
