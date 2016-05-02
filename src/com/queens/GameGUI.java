@@ -1,15 +1,30 @@
 package com.queens;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+
 public class GameGUI extends Application {
+
+    private Player[] players = new Player[2];
 
     private static Game game;
     private Button[] guiBoard;
@@ -22,7 +37,11 @@ public class GameGUI extends Application {
     private boolean playerAnswer;
     private int selectedSqaure;
 
+    Stage theStage;
+    static DataFile data;
+
     public void start(Stage primaryStage) {
+        theStage = primaryStage;
         game.pickFirstPlayer();
         guiBoard = new Button[9];
         agree = new Button("True");
@@ -80,8 +99,46 @@ public class GameGUI extends Application {
             selectedSqaure = game.nextPlayer();
         });
 
-        VBox rootBox = new VBox(20);
-        rootBox.setAlignment(Pos.CENTER); // default TOP_LEFT
+        ///LOGIN SCENE CREATION (PANEL)
+        GridPane loginPane = new GridPane();
+        loginPane.setAlignment(Pos.CENTER);
+        loginPane.setHgap(10);
+        loginPane.setVgap(10);
+        loginPane.setPadding(new Insets(25, 25, 25, 25));
+
+        //LOGIN TITLE
+        Text scenetitle = new Text("Please Login or Register");
+        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        loginPane.add(scenetitle, 0, 0, 2, 1);
+
+        //USER NAME BOX
+        Label userName = new Label("User Name:");
+        loginPane.add(userName, 0, 1);
+        TextField userField = new TextField();
+        loginPane.add(userField, 1, 1);
+
+        //PASSWORD BOX
+        Label pw = new Label("Password:");
+        loginPane.add(pw, 0, 2);
+        PasswordField pwField = new PasswordField();
+        loginPane.add(pwField, 1, 2);
+
+        //LOGIN BUTTON
+        Button logBtn = new Button("Login");
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(logBtn);
+        loginPane.add(hbBtn, 1, 4);
+
+        //REGISTER BUTTON
+        Button rBtn = new Button("Register");
+        HBox hbBtn2 = new HBox(10);
+        hbBtn2.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn2.getChildren().add(rBtn);
+        loginPane.add(hbBtn2, 1, 5);
+
+        VBox gameBox = new VBox(20);
+        gameBox.setAlignment(Pos.CENTER);
 
         HBox questionBox = new HBox(20);
         questionBox.setAlignment(Pos.CENTER);
@@ -108,17 +165,54 @@ public class GameGUI extends Application {
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
         trueOrFalseBox.getChildren().addAll(agree, disagree, endTurn);
 
-        rootBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
+        gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
-        Scene scene = new Scene(rootBox, 600, 500);
+        Scene gameScene = new Scene(gameBox, 600, 500);
+        Scene loginScene = new Scene(loginPane, 300,300);
+
         primaryStage.setTitle("Hollywood Squares");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(loginScene);
         primaryStage.show();
+
+        //TO DO: First Player Login-> Select 1 or 2 Players -> if(1 player) start game else if(2 p) second player login-> login
+        //login button press action
+
+        logBtn.setOnAction(e -> {
+            String tempUser = userField.getText();
+            String tempPass = pwField.getText();
+
+            if(data.checkPlayerCredentials(tempUser,tempPass)) {
+                System.out.println("Logged in!");
+            }
+            else System.out.println("Either username or password is incorrect. Are you registered?");
+
+            //userField.clear();
+            pwField.clear();
+        });
+
+        //register button press action
+        rBtn.setOnAction(e -> {
+            //if login already exists, notify user
+            //else create new user with login and pw
+            theStage.setScene(gameScene);
+            System.out.println("Hello World!");
+        });
+
     }
 
-    public void playGame(DataFile data, Player[] players, String[] args) {
+    public void playGame(DataFile data, String[] args) {
+
+        this.data = data;
+
+
+        this.getPlayers();
         this.game = new Game(data, players);
         launch(args);
+    }
+
+    public void getPlayers() {
+        players[0] = new Player("ciao", "goodbye", new ArrayList<>());
+        players[1] = new Player("abc", "efg", new ArrayList<>());
     }
 
     public void playerFeedback(boolean answer) {
