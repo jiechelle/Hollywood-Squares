@@ -15,7 +15,9 @@ public class Board {
         board = new int[9];
         winConfig = new HashMap<>();
         secretSquare = new Random().nextInt(9);
+        availableSquares = new ArrayList<>();
 
+        checkAvailableSquares();
         populateWinConfig();
     }
 
@@ -23,11 +25,20 @@ public class Board {
         return availableSquares;
     }
 
+    public void checkAvailableSquares() {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == -1) {
+                availableSquares.add(i);
+            }
+        }
+    }
+
     public int[] getBoard() {
         return board;
     }
 
     public void setSquare(int index, Player currentPlayer) {
+        checkAvailableSquares();
         this.board[index] = currentPlayer.getMarker();
 
         for (Integer i = 0; i < board.length; i++) {
@@ -37,6 +48,11 @@ public class Board {
                 availableSquares.remove(i);
             }
         }
+
+        for (int i = 0; i < board.length; i++)
+            System.out.print(board[i]);
+
+        System.out.println();
     }
 
     public void resetSquare(int index) {

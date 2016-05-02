@@ -1,7 +1,6 @@
 package com.queens;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,17 +8,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Control;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class GameGUI extends Application {
@@ -34,8 +30,9 @@ public class GameGUI extends Application {
     private Text question;
     private Text celebrityResponse;
     private Text isCorrect;
+    private Text currerntPlayer;
     private boolean playerAnswer;
-    private int selectedSqaure;
+    private int selectedSquare;
 
     Stage theStage;
     static DataFile data;
@@ -48,55 +45,73 @@ public class GameGUI extends Application {
         disagree = new Button("False");
         endTurn = new Button("End Turn");
 
-        question = new Text("Please select a square");
+        agree.setVisible(false);
+        disagree.setVisible(false);
+        endTurn.setVisible(false);
 
+        question = new Text("Please select a square");
         celebrityResponse = new Text();
         celebrityResponse.setVisible(false);
 
         isCorrect = new Text();
         isCorrect.setVisible(false);
 
+        if (game.getCurrentPlayer().getMarker() == 1)
+            currerntPlayer = new Text("Player 1 ");
+        else
+            currerntPlayer = new Text("Player 2 ");
+
         for (Integer i = 0; i < guiBoard.length; i++) {
             guiBoard[i] = new Button();
-            guiBoard[i].setText(Integer.toString(i));
             guiBoard[i].setPrefSize(100, 100);
+            guiBoard[i].setId(Integer.toString(i));
+
             guiBoard[i].setOnAction(e -> {
 
-                // selectedSqaure = FIGURE THIS SHIT OUT
-                isCorrect.setText(null);
+                selectedSquare = Integer.parseInt(( (Control) e.getSource()).getId());
                 game.selectQuestionAndAnswers();
                 question.setText(game.getQuestion());
                 celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
                 celebrityResponse.setVisible(true);
 
-                agree.setDisable(false);
-                disagree.setDisable(false);
+                agree.setVisible(true);
+                disagree.setVisible(true);
                 for (int j = 0; j < guiBoard.length; j++) {
                     guiBoard[j].setDisable(true);
                 }
-
-                System.out.println(selectedSqaure);
             });
         }
 
         agree.setPrefSize(100, 20);
         agree.setOnAction(e -> {
+            endTurn.setVisible(true);
             playerAnswer = true;
-            playerFeedback(game.setSquare(playerAnswer, selectedSqaure));
+            playerFeedback(game.setSquare(playerAnswer, selectedSquare));
         });
 
         disagree.setPrefSize(100, 20);
         disagree.setOnAction(e -> {
+            endTurn.setVisible(true);
             playerAnswer = false;
-            playerFeedback(!game.setSquare(playerAnswer, selectedSqaure));
+            playerFeedback(game.setSquare(playerAnswer, selectedSquare));
         });
 
         endTurn.setPrefSize(100, 20);
         endTurn.setOnAction(e -> {
+            question.setText("Please select a square");
+            celebrityResponse.setVisible(false);
+            isCorrect.setVisible(false);
             agree.setVisible(true);
             disagree.setVisible(true);
             endTurn.setVisible(false);
-            selectedSqaure = game.nextPlayer();
+            game.nextPlayer();
+
+            if (game.getCurrentPlayer().getMarker() == 1)
+                currerntPlayer.setText("Player 1 ");
+            else
+                currerntPlayer.setText("Player 2 ");
+
+            ((Control) e.getSource()).setVisible(false);
         });
 
         ///LOGIN PANEL FRAME CREATION
@@ -163,7 +178,7 @@ public class GameGUI extends Application {
         thirdRowSquares.getChildren().addAll(guiBoard[6], guiBoard[7], guiBoard[8]);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
-        trueOrFalseBox.getChildren().addAll(agree, disagree, endTurn);
+        trueOrFalseBox.getChildren().addAll(currerntPlayer, agree, disagree, endTurn);
 
         gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
@@ -207,7 +222,7 @@ public class GameGUI extends Application {
             }
         });
         //use this to switch scene to game board
-        //theStage.setScene(gameScene);
+        // theStage.setScene(gameScene);
     }
 
     public void playGame(DataFile data, String[] args) {
@@ -226,18 +241,29 @@ public class GameGUI extends Application {
         players[1] = new Player("abc", "efg", new ArrayList<>());
     }
 
-    public void playerFeedback(boolean answer) {
-        if (answer)
+    public void playerFeedback(int answer) {
+        if (answer == game.getCurrentPlayer().getMarker())
             isCorrect.setText("Correct");
         else
             isCorrect.setText("Wrong");
-        isCorrect.setVisible(true);
 
+        isCorrect.setVisible(true);
         agree.setVisible(false);
         disagree.setVisible(false);
         endTurn.setVisible(true);
+
         for (int j = 0; j < guiBoard.length; j++) {
-            guiBoard[j].setDisable(false);
+            if (j == selectedSquare && answer != 0) {
+                if (answer == 1)
+                    guiBoard[j].setText("X");
+                else
+                    guiBoard[j].setText("O");
+            }
+
+            if (guiBoard[j].getText().equals("")) {
+                guiBoard[j].setDisable(false);
+            }
+
         }
     }
 }
