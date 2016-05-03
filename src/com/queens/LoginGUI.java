@@ -17,7 +17,7 @@ import java.util.Optional;
 public class LoginGUI {
 
     private Scene loginScene;
-    private Stage myStage;
+    private Stage loginStage;
     private Player[] players = new Player[2];
     static DataFile data;
     private GameGUI gameGUI;
@@ -28,7 +28,7 @@ public class LoginGUI {
     }
 
     public void launchLogin(Stage stage) {
-        myStage = stage;
+        loginStage = stage;
 
         ///LOGIN PANEL FRAME CREATION
         GridPane loginPane = new GridPane();
@@ -90,18 +90,26 @@ public class LoginGUI {
                 //assign players to array depending on case 1 or case 2
                 if (players[0] == null)
                     players[0] = data.getPlayer(tempUser);
-                    //players[0] = new Player("hey", "hello", new ArrayList<>());
-                else if (players[1] == null && players[0] != null)
-                    players[1] = data.getPlayer(tempUser);
 
-                //TWO PLAYERS LOGGED IN
+                else if (players[0] != null && players[1] == null && tempUser != players[0].getUsername()) {
+                    players[1] = data.getPlayer(tempUser);
+                    //check if player 2 is duplicate player 1
+                    if (players[0].getUsername() == players[1].getUsername()) {
+                        loginAlert.setTitle("Error");
+                        loginAlert.setContentText("You can't play against yourself, dummy");
+                        loginAlert.showAndWait();
+                        players[1] = null;
+                    }
+                }
+
+                //TWO PLAYERS LOGGED IN, SWITCH STAGE TO GAME STAGE
                 if (players[1] != null && players[0] != null) {
                     loginAlert.setTitle("Game Start");
                     loginAlert.setHeaderText("Two player game ");
                     loginAlert.setContentText("Press OK to start!");
                     loginAlert.showAndWait();
                     gameGUI = new GameGUI(data, players);
-                    gameGUI.launchGame(myStage);
+                    gameGUI.launchGame(loginStage);
                 }
 
                 //PLayer 1 logged in successfully, BEGIN SELECTION SEQUENCE
@@ -170,9 +178,9 @@ public class LoginGUI {
         });
 
         loginScene = new Scene(loginPane, 300, 270);
-        myStage.setTitle("Hollywood Squares");
-        myStage.setScene(loginScene);
-        myStage.setResizable(true);
-        myStage.show();
+        loginStage.setTitle("Hollywood Squares");
+        loginStage.setScene(loginScene);
+        loginStage.setResizable(true);
+        loginStage.show();
     }
 }
