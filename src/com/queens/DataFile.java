@@ -10,6 +10,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static sun.audio.AudioPlayer.player;
+
 public class DataFile {
     private Scanner playersData;
     private Scanner questionsData;
@@ -22,6 +24,10 @@ public class DataFile {
     public DataFile() {
         players = new HashMap<>();
         questions = new HashMap<>();
+    }
+
+    public Player getPlayer(String username) {
+        return players.get(username);
     }
 
     public void getData() {

@@ -1,31 +1,24 @@
 package com.queens;
 
-import java.util.ArrayList;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class Main {
+public class Main extends Application {
+
+    private static DataFile data;
+    private static Player[] players = new Player[2];
+
+    public void start(Stage primaryStage) throws Exception {
+        LoginGUI loginGUI = new LoginGUI(data,players);
+        loginGUI.launchLogin(primaryStage);
+    }
 
     public static void main(String[] args) {
-        DataFile data = new DataFile();
+        System.out.println("To get in to game board stage, enter the game with two players, registration and login should be working");
+        System.out.println("Single player currently disabled until Alex tells me how to handle computer game with player[1] being null");
+
+        data = new DataFile();
         data.getData();
-
-       // data.checkPlayerCredentials
-
-        // Login login = new Login(data);
-        // Player[] players = login.getPlayers();
-        //Player[] players = new Player[2];
-        //players[0] = new Player("ciao", "goodbye", new ArrayList<>());
-        //players[1] = new Player("ciao", "goodbye", new ArrayList<>());
-
-        GameGUI gameGUI = new GameGUI();
-        gameGUI.getPlayers();
-        gameGUI.playGame(data, args);
-
-        // try {
-        //    data.addPlayer("john", "doe");
-        // } catch (ValidationException e) {
-        //    System.err.println(String.format("ValidationException, %s", e.getMessage()));
-        // } catch (Exception e) {
-        //    System.err.println(String.format("Exception, %s", e.getMessage()));
-        // }
+        launch(args);
     }
 }
