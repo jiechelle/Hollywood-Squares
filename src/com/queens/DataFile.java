@@ -139,6 +139,11 @@ public class DataFile {
             throw new ValidationException("Username or password has whitespaces");
         }
 
+        // check if username or password is empty
+        if(username.isEmpty() || password.isEmpty()){
+            throw new SecurityException("Username or password is blank");
+        }
+
         // check if username is in players if not add him
         if (players.containsKey(username)) {
             throw new Exception("Username already in data players filePath");
