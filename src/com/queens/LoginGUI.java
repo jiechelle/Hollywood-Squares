@@ -11,6 +11,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -86,7 +87,6 @@ public class LoginGUI {
             String tempPass = pwField.getText();
 
             if (data.checkPlayerCredentials(tempUser, tempPass)) {
-
                 //assign players to array depending on case 1 or case 2
                 if (players[0] == null)
                     players[0] = data.getPlayer(tempUser);
@@ -96,7 +96,8 @@ public class LoginGUI {
                     //check if player 2 is duplicate player 1
                     if (players[0].getUsername() == players[1].getUsername()) {
                         loginAlert.setTitle("Error");
-                        loginAlert.setContentText("You can't play against yourself, dummy");
+                        loginAlert.setHeaderText("You can't play against yourself, dummy");
+                        loginAlert.setContentText("Make sure player two is a different account");
                         loginAlert.showAndWait();
                         players[1] = null;
                     }
@@ -151,29 +152,27 @@ public class LoginGUI {
             String tempUser = userField.getText();
             String tempPass = pwField.getText();
 
-            //USER NAME TAKEN
-            if (data.checkPlayerName(tempUser)) {
+            try {
+                data.addPlayer(tempUser,tempPass);
+                System.out.println("Account " + tempUser + " successfully created");
+                data.writePlayers();
+            }catch(ValidationException e0){
+                loginAlert.setTitle("Registration Error");
+                loginAlert.setContentText("Text fields cannot have blank spaces");
+                loginAlert.showAndWait();
+                pwField.clear();
+                userField.clear();
+            } catch(SecurityException e2){
+                loginAlert.setTitle("Registration Error");
+                loginAlert.setContentText("Text fields cannot be empty!");
+                loginAlert.showAndWait();
+            } catch(Exception e1) {
                 loginAlert.setTitle("Registration Error");
                 loginAlert.setHeaderText("Username already taken");
                 loginAlert.setContentText("Please try again");
                 loginAlert.showAndWait();
                 pwField.clear();
                 userField.clear();
-                //BLANK FIELDS
-            } else if (tempUser.isEmpty() || tempPass.isEmpty()) {
-                loginAlert.setTitle("Registration Error");
-                loginAlert.setHeaderText("Text fields cannot be empty!");
-                loginAlert.setContentText("Make sure to fill in a username and password");
-                loginAlert.showAndWait();
-                //SUCCESSFUL REGISTRATION
-            } else if (!data.checkPlayerCredentials(tempUser, tempPass) && !tempUser.isEmpty() && !tempPass.isEmpty()) {
-                try {
-                    data.addPlayer(tempUser, tempPass);
-                    System.out.println("Account " + tempUser + " successfully created");
-                    data.writePlayers();
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
             }
         });
 
