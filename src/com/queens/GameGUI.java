@@ -36,7 +36,7 @@ public class GameGUI {
 
         boardStage = stage;
         this.game = new Game(data, players);
-        System.out.println("Player 1: "+players[0].getUsername()+" Player 2: "+players[1].getUsername());
+        // System.out.println("Player 1: "+players[0].getUsername()+" Player 2: "+players[1].getUsername());
 
         game.pickFirstPlayer();
         guiBoard = new Button[9];

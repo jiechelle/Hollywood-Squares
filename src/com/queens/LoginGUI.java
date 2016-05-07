@@ -123,8 +123,8 @@ public class LoginGUI {
                         loginAlert.setContentText("Press OK to start!");
                         loginAlert.showAndWait();
                         System.out.println("ONE PLAYER GAME WILL CRASH UNTIL AI LOGIC IMPLEMENTED (because only player[0] is filled and player[1] is empty");
-                        //gameGUI = new GameGUI(data, players);
-                        //gameGUI.launchGame(myStage);
+                        gameGUI = new GameGUI(data, players);
+                        gameGUI.launchGame(loginStage);
 
                         //GO BACK TO LOGIN SCREEN AND REGISTER PLAYER 2
                     } else if (result.get() == buttonTypeTwo) {

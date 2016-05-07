@@ -1,5 +1,6 @@
 package com.queens;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -18,7 +19,13 @@ public class Game {
         this.data = data;
         board = new Board();
         player1 = players[0];
-        player2 = players[1];
+
+        if (players[1] == null) {
+            player2 = new Player("_Computer", "", new ArrayList<Integer>());
+        } else {
+            player2 = players[1];
+        }
+
         player1.setMarker(1);
         player2.setMarker(2);
     }
