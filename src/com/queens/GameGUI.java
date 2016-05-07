@@ -72,6 +72,8 @@ public class GameGUI {
                 question.setText(game.getQuestion());
                 celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
                 celebrityResponse.setVisible(true);
+                agree.setVisible(true);
+                disagree.setVisible(true);
 
                 agree.setVisible(true);
                 disagree.setVisible(true);
@@ -100,8 +102,6 @@ public class GameGUI {
             question.setText("Please select a square");
             celebrityResponse.setVisible(false);
             isCorrect.setVisible(false);
-            agree.setVisible(true);
-            disagree.setVisible(true);
             endTurn.setVisible(false);
             game.nextPlayer();
 
