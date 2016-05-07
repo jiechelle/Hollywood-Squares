@@ -92,11 +92,11 @@ public class LoginGUI {
                 if (players[0] == null) {
                     players[0] = data.getPlayer(tempUser);
 
-                } else if (players[1] == null && !tempUser.equals(players[0].getUsername())) {
+                } else if (players[1] == null) {
                     players[1] = data.getPlayer(tempUser);
 
                     //check if player 2 is duplicate player 1
-                    if (players[0].getUsername().equals(players[1].getUsername())) {
+                    if (players[1].getUsername().equals(players[0].getUsername())) {
                         loginAlert.setTitle("Error");
                         loginAlert.setHeaderText("You can't play against yourself, dummy");
                         loginAlert.setContentText("Make sure player two is a different account");
@@ -111,7 +111,7 @@ public class LoginGUI {
                     loginAlert.setHeaderText("Two player game ");
                     loginAlert.setContentText("Press OK to start!");
                     loginAlert.showAndWait();
-                    gameGUI = new GameGUI(data, players);
+                    gameGUI = new GameGUI(data, players, this);
                     gameGUI.launchGame(loginStage);
                 }
 
@@ -125,8 +125,7 @@ public class LoginGUI {
                         loginAlert.setHeaderText("One player game ");
                         loginAlert.setContentText("Press OK to start!");
                         loginAlert.showAndWait();
-                        System.out.println("ONE PLAYER GAME WILL CRASH UNTIL AI LOGIC IMPLEMENTED (because only player[0] is filled and player[1] is empty");
-                        gameGUI = new GameGUI(data, players);
+                        gameGUI = new GameGUI(data, players, this);
                         gameGUI.launchGame(loginStage);
 
                         // GO BACK TO LOGIN SCREEN AND REGISTER PLAYER 2
@@ -162,6 +161,7 @@ public class LoginGUI {
 
             }catch(ValidationException e0){
                 loginAlert.setTitle("Registration Error");
+                loginAlert.setHeaderText("");
                 loginAlert.setContentText("Text fields cannot have blank spaces");
                 loginAlert.showAndWait();
                 pwField.clear();
@@ -169,6 +169,7 @@ public class LoginGUI {
 
             } catch(SecurityException e2){
                 loginAlert.setTitle("Registration Error");
+                loginAlert.setHeaderText("");
                 loginAlert.setContentText("Text fields cannot be empty!");
                 loginAlert.showAndWait();
 
