@@ -56,9 +56,9 @@ public class GameGUI {
         isCorrect.setVisible(false);
 
         if (game.getCurrentPlayer().getMarker() == 1)
-            currentPlayer = new Text("Player 1 ");
+            currentPlayer = new Text("Player 1 Mr. X");
         else
-            currentPlayer = new Text("Player 2 ");
+            currentPlayer = new Text("Player 2 Mrs. O");
 
         for (Integer i = 0; i < guiBoard.length; i++) {
             guiBoard[i] = new Button();
@@ -106,9 +106,9 @@ public class GameGUI {
             game.nextPlayer();
 
             if (game.getCurrentPlayer().getMarker() == 1)
-                currentPlayer.setText("Player 1 ");
+                currentPlayer.setText("Player 1 Mr. X");
             else
-                currentPlayer.setText("Player 2 ");
+                currentPlayer.setText("Player 2 Mrs. O");
 
             for (int j = 0; j < guiBoard.length; j++) {
                 if (guiBoard[j].getText().equals("")) {
@@ -162,10 +162,15 @@ public class GameGUI {
         else
             isCorrect.setText("Wrong");
 
+        if (game.checkCurrentPlayerIsWinner()) {
+            question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
+            endTurn.setVisible(false);
+        } else {
+            endTurn.setVisible(true);
+        }
         isCorrect.setVisible(true);
         agree.setVisible(false);
         disagree.setVisible(false);
-        endTurn.setVisible(true);
 
         // Disable all buttons on guiBoard when agree or disagree is pressed
         for (int j = 0; j < guiBoard.length; j++) {
