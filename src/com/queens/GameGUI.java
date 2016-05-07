@@ -26,9 +26,12 @@ public class GameGUI {
     private static DataFile data;
     private Player[] players = new Player[2];
 
-    public GameGUI(DataFile data,Player[] players) {
+    LoginGUI loginGUI;
+
+    public GameGUI(DataFile data,Player[] players, LoginGUI loginGUI) {
         this.data = data;
         this.players=players;
+        this.loginGUI = loginGUI;
     }
 
     public void launchGame(Stage stage) {
@@ -135,6 +138,16 @@ public class GameGUI {
         if (game.checkCurrentPlayerIsWinner()) {
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
             endTurn.setVisible(false);
+
+            // todo: create dialog pop up box to ask user to choose one of two things ...
+            // todo: replay the game with same players OR return to login
+            //return to login, need to reset board state, player state, game state etc..
+            //players[0] = null;
+            //players[1] = null;
+            //reset board state
+            //loginGUI.launchLogin(boardStage);
+            //edit
+
         } else {
             endTurn.setVisible(true);
         }
