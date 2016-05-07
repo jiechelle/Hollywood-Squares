@@ -120,6 +120,12 @@ public class DataFile {
         return checkPlayerName(username) && players.get(username).getPassword().equals(password);
     }
 
+    /**
+     * Check if player name (username) is already in list of players
+     *
+     * @param username
+     * @return true if username is already in players else false
+     */
     public boolean checkPlayerName(String username){
         return players.containsKey(username);
     }
@@ -162,6 +168,9 @@ public class DataFile {
         }
 
         for (Player player : players.values()) {
+            if (player.getUsername().equals("the computer"))
+                continue;
+
             String scores = "";
 
             // go through players high scores and create one string

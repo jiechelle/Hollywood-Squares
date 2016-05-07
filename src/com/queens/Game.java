@@ -21,7 +21,7 @@ public class Game {
         player1 = players[0];
 
         if (players[1] == null) {
-            player2 = new Player("_Computer", "", new ArrayList<>());
+            player2 = new Player("the computer", "", new ArrayList<>());
         } else {
             player2 = players[1];
         }
