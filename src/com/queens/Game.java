@@ -21,7 +21,7 @@ public class Game {
         player1 = players[0];
 
         if (players[1] == null) {
-            player2 = new Player("_Computer", "", new ArrayList<Integer>());
+            player2 = new Player("_Computer", "", new ArrayList<>());
         } else {
             player2 = players[1];
         }
@@ -143,11 +143,13 @@ public class Game {
         }
     }
 
-    // public void restartGame() {
-    //
-    // }
+    // todo finish method
+    public void restartGame() {
 
-    // public void endGame() {
-    //
-    // }
+    }
+
+    // todo finish method
+    public void endGame() {
+
+    }
 }

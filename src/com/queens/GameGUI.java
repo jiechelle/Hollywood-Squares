@@ -19,12 +19,11 @@ public class GameGUI {
     private Text celebrityResponse;
     private Text isCorrect;
     private Text currentPlayer;
-    private boolean playerAnswer;
     private int selectedSquare;
 
     private Stage boardStage;
     private Scene gameScene;
-    static DataFile data;
+    private static DataFile data;
     private Player[] players = new Player[2];
 
     public GameGUI(DataFile data,Player[] players) {
@@ -33,17 +32,19 @@ public class GameGUI {
     }
 
     public void launchGame(Stage stage) {
-
         boardStage = stage;
-        this.game = new Game(data, players);
-        // System.out.println("Player 1: "+players[0].getUsername()+" Player 2: "+players[1].getUsername());
 
+        // Initialize game and pick the first player
+        game = new Game(data, players);
         game.pickFirstPlayer();
+
+        // Initialize buttons
         guiBoard = new Button[9];
         agree = new Button("True");
         disagree = new Button("False");
         endTurn = new Button("End Turn");
 
+        // Hide agree, disagree and endTurn buttons
         agree.setVisible(false);
         disagree.setVisible(false);
         endTurn.setVisible(false);
@@ -77,8 +78,8 @@ public class GameGUI {
 
                 agree.setVisible(true);
                 disagree.setVisible(true);
-                for (int j = 0; j < guiBoard.length; j++) {
-                    guiBoard[j].setDisable(true);
+                for (Button aGuiBoard : guiBoard) {
+                    aGuiBoard.setDisable(true);
                 }
             });
         }
@@ -86,15 +87,13 @@ public class GameGUI {
         agree.setPrefSize(100, 20);
         agree.setOnAction(e -> {
             endTurn.setVisible(true);
-            playerAnswer = true;
-            playerFeedback(game.setSquare(playerAnswer, selectedSquare));
+            playerFeedback(game.setSquare(true, selectedSquare));
         });
 
         disagree.setPrefSize(100, 20);
         disagree.setOnAction(e -> {
             endTurn.setVisible(true);
-            playerAnswer = false;
-            playerFeedback(game.setSquare(playerAnswer, selectedSquare));
+            playerFeedback(game.setSquare(false, selectedSquare));
         });
 
         endTurn.setPrefSize(100, 20);
@@ -110,15 +109,53 @@ public class GameGUI {
             else
                 currentPlayer.setText("Player 2 Mrs. O");
 
-            for (int j = 0; j < guiBoard.length; j++) {
-                if (guiBoard[j].getText().equals("")) {
-                    guiBoard[j].setDisable(false);
+            for (Button guiBoardSquare : guiBoard) {
+                if (guiBoardSquare.getText().equals("")) {
+                    guiBoardSquare.setDisable(false);
                 }
             }
             ((Control) e.getSource()).setVisible(false);
         });
 
 
+        gameScene = new Scene(createGameBox(), 600, 500);
+
+        boardStage.setTitle("Home");
+        boardStage.setScene(gameScene);
+        boardStage.setResizable(true);
+        boardStage.show();
+    }
+
+    private void playerFeedback(int answer) {
+        if (answer == game.getCurrentPlayer().getMarker())
+            isCorrect.setText("Correct");
+        else
+            isCorrect.setText("Wrong");
+
+        if (game.checkCurrentPlayerIsWinner()) {
+            question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
+            endTurn.setVisible(false);
+        } else {
+            endTurn.setVisible(true);
+        }
+        isCorrect.setVisible(true);
+        agree.setVisible(false);
+        disagree.setVisible(false);
+
+        // Disable all buttons on guiBoard when agree or disagree is pressed
+        for (int j = 0; j < guiBoard.length; j++) {
+            guiBoard[j].setDisable(true);
+
+            if (j == selectedSquare && answer != 0) {
+                if (answer == 1)
+                    guiBoard[j].setText("X");
+                else
+                    guiBoard[j].setText("O");
+            }
+        }
+    }
+
+    private VBox createGameBox() {
         VBox gameBox = new VBox(20);
         gameBox.setAlignment(Pos.CENTER);
 
@@ -148,40 +185,7 @@ public class GameGUI {
         trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn);
 
         gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
-        gameScene = new Scene(gameBox, 600, 500);
 
-        boardStage.setTitle("Home");
-        boardStage.setScene(gameScene);
-        boardStage.setResizable(true);
-        boardStage.show();
-    }
-
-    public void playerFeedback(int answer) {
-        if (answer == game.getCurrentPlayer().getMarker())
-            isCorrect.setText("Correct");
-        else
-            isCorrect.setText("Wrong");
-
-        if (game.checkCurrentPlayerIsWinner()) {
-            question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
-            endTurn.setVisible(false);
-        } else {
-            endTurn.setVisible(true);
-        }
-        isCorrect.setVisible(true);
-        agree.setVisible(false);
-        disagree.setVisible(false);
-
-        // Disable all buttons on guiBoard when agree or disagree is pressed
-        for (int j = 0; j < guiBoard.length; j++) {
-            guiBoard[j].setDisable(true);
-
-            if (j == selectedSquare && answer != 0) {
-                if (answer == 1)
-                    guiBoard[j].setText("X");
-                else
-                    guiBoard[j].setText("O");
-            }
-        }
+        return gameBox;
     }
 }
