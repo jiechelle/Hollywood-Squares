@@ -14,9 +14,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        System.out.println("To get in to game board stage, enter the game with two players, registration and login should be working");
-        System.out.println("Single player currently disabled until Alex tells me how to handle computer game with player[1] being null");
-
         data = new DataFile();
         data.getData();
         launch(args);
