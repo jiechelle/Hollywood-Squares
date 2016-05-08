@@ -3,22 +3,19 @@ package com.queens;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 public class Board {
     private int[] board;
     private ArrayList<Integer> availableSquares; // list available squares
     private int secretSquare;
 
-    private HashMap<String, Boolean> winConfig;
-
     public Board() {
         board = new int[9];
-        winConfig = new HashMap<>();
         secretSquare = new Random().nextInt(9);
         availableSquares = new ArrayList<>();
 
         checkAvailableSquares();
-        populateWinConfig();
     }
 
     public ArrayList<Integer> getAvailableSquares() {
@@ -27,8 +24,10 @@ public class Board {
 
     public void checkAvailableSquares() {
         for (int i = 0; i < board.length; i++) {
-            if (board[i] == -1) {
+            if (board[i] == 0) {
                 availableSquares.add(i);
+            } else if (availableSquares.contains(i)) {
+                availableSquares.remove(i);
             }
         }
     }
@@ -46,15 +45,12 @@ public class Board {
 
     public void setSquare(int index, Player currentPlayer) {
         checkAvailableSquares();
-        this.board[index] = currentPlayer.getMarker();
 
-        for (Integer i = 0; i < board.length; i++) {
-            if (board[i] == 0 && !availableSquares.contains(i)) {
-                availableSquares.add(i);
-            } else if (availableSquares.contains(i)) {
-                availableSquares.remove(i);
-            }
+        if (board[index] != 0) {
+            System.out.println("Error, spot on board is already filled");
         }
+
+        this.board[index] = currentPlayer.getMarker();
     }
 
     public void resetSquare(int index) {
@@ -66,50 +62,51 @@ public class Board {
      *
      * @return true or false depending on if currentPlayer has one
      */
-    public boolean checkCurrentPlayerIsWinner(Player currentPlayer) {
+    public boolean checkPlayerIsWinner(Player incomingPlayer) {
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
-        return winConfig.containsKey(convertPlayerMarkers(currentPlayer))
-                || currentPlayer.getMarkerCount() >= 5;
+        String bo = convertPlayerMarkers(incomingPlayer);
 
-    }
+                // horizontal wins
+        return  (bo.charAt(0) == bo.charAt(1) && bo.charAt(0) == bo.charAt(2) && bo.charAt(0) == 1) ||
+                (bo.charAt(3) == bo.charAt(4) && bo.charAt(3) == bo.charAt(5) && bo.charAt(3) == 1) ||
+                (bo.charAt(6) == bo.charAt(7) && bo.charAt(6) == bo.charAt(8) && bo.charAt(6) == 1) ||
 
-    /**
-     * Add all winning configurations to winConfig
-     */
-    private void populateWinConfig() {
-        // horizontal wins
-        winConfig.put("111000000", null);
-        winConfig.put("000111000", null);
-        winConfig.put("000000111", null);
+                // vertical wins
+                (bo.charAt(0) == bo.charAt(3) && bo.charAt(0) == bo.charAt(5) && bo.charAt(0) == 1) ||
+                (bo.charAt(1) == bo.charAt(4) && bo.charAt(1) == bo.charAt(7) && bo.charAt(1) == 1) ||
+                (bo.charAt(2) == bo.charAt(5) && bo.charAt(2) == bo.charAt(8) && bo.charAt(2) == 1) ||
 
-        // vertical wins
-        winConfig.put("100100100", null);
-        winConfig.put("010010010", null);
-        winConfig.put("001001001", null);
+                // diagonal wins
+                (bo.charAt(0) == bo.charAt(4) && bo.charAt(0) == bo.charAt(8) && bo.charAt(0) == 1) ||
+                (bo.charAt(2) == bo.charAt(2) && bo.charAt(2) == bo.charAt(6) && bo.charAt(2) == 1) ||
 
-        // diagonal wins
-        winConfig.put("100010001", null);
-        winConfig.put("001010100", null);
+                (incomingPlayer.getMarkerCount() >= 5);
+
     }
 
     /**
      * Convert board into a string of 1's and 0's
      *
-     * @param currentPlayer mark to convert string
+     * @param incomingPlayer mark to convert string
      * @return a string of the board eg. "10110010"
      */
-    private String convertPlayerMarkers(Player currentPlayer) {
+    private String convertPlayerMarkers(Player incomingPlayer) {
         String playerMarks = "";
 
         for (int i : board) {
-            if (i == currentPlayer.getMarker()) {
+            if (i == incomingPlayer.getMarker()) {
                 playerMarks += "1";
             } else {
                 playerMarks += "0";
             }
         }
 
+        System.out.print("Curren Board ");
+        for (int i: board) {
+            System.out.print(i);
+        }
+        System.out.println("\nPlayer marks " + playerMarks + "\n");
         return playerMarks;
     }
 

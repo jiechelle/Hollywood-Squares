@@ -92,10 +92,11 @@ public class Game {
         return celebrityAnswer.equals(answers[0]);
     }
 
-    public int setSquare(boolean playerAnswer, int index) {
+    public int determineSquareFate(boolean playerAnswer, int index) {
 
         // if the current player has the correct answer, set the square
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
+            System.out.println("Marking Current Player " + currentPlayer.getUsername());
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
             currentPlayer.incMarkerCount();
@@ -105,12 +106,18 @@ public class Game {
             // wins then reset the square
         } else {
             Player otherPlayer = player1;
+
             if (currentPlayer == otherPlayer) {
                 otherPlayer = player2;
             }
 
             board.setSquare(index, otherPlayer);
-            if (board.checkCurrentPlayerIsWinner(otherPlayer)) {
+
+            System.out.println("CHECKING IF OTHER PLAYER WINS IF I MARK THEIR SQUARE " + otherPlayer.getUsername() + " "
+                    + board.checkPlayerIsWinner(otherPlayer));
+
+            if (board.checkPlayerIsWinner(otherPlayer)) {
+                System.out.println("RESET");
                 board.resetSquare(index);
             } else {
                 otherPlayer.incCurrentScore(1);
@@ -119,12 +126,12 @@ public class Game {
             }
         }
 
-        // Nobody gets the marker on the square square
+        // Nobody gets the marker on the square
         return 0;
     }
 
     public boolean checkCurrentPlayerIsWinner() {
-        if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
+        if (board.checkPlayerIsWinner(currentPlayer)) {
             currentPlayer.addHighScore();
             data.writePlayers();
             return true;

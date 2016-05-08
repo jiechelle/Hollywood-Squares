@@ -1,8 +1,2 @@
-Who is the first president?
-    Washington, Abe Lincoln, Obama, George Bush;
-
 What is 1 + 1?
     2, 3, 4, 5;
-
-Who is your daddy and what does he do?
-    john, ivan, alex, stacey;
