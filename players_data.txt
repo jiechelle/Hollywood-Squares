@@ -2,7 +2,6 @@ bb bb 0
 a b 0 
 abc abc 0 
 bbb bbb 0 
-srzbznz dragon55 0 
 lol lol 0 
 angelo poo 0 
 ivan longd 1 2 
