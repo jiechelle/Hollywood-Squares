@@ -1,7 +1,6 @@
 package com.queens;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class Board {
@@ -9,28 +8,27 @@ public class Board {
     private ArrayList<Integer> availableSquares; // list available squares
     private int secretSquare;
 
-    private HashMap<String, Boolean> winConfig;
-
     public Board() {
         board = new int[9];
-        winConfig = new HashMap<>();
-        secretSquare = new Random().nextInt(9);
         availableSquares = new ArrayList<>();
 
-        checkAvailableSquares();
-        populateWinConfig();
+        updateAvailableSquares();
     }
 
     public ArrayList<Integer> getAvailableSquares() {
         return availableSquares;
     }
 
-    public void checkAvailableSquares() {
+    public void updateAvailableSquares() {
         for (int i = 0; i < board.length; i++) {
-            if (board[i] == -1) {
+            if (board[i] == 0 && !availableSquares.contains(i)) {
                 availableSquares.add(i);
+            } else if (board[i] != 0 && availableSquares.contains(i)) {
+                availableSquares.remove(i);
             }
         }
+
+        System.out.println("AvailableSquaresIndexes " + availableSquares);
     }
 
     public int[] getBoard() {
@@ -44,17 +42,23 @@ public class Board {
         }
     }
 
+    public void setSecretSquare() {
+        secretSquare = new Random().nextInt(9);
+    }
+
+    public int getSecretSquare() {
+        return secretSquare;
+    }
+
     public void setSquare(int index, Player currentPlayer) {
-        checkAvailableSquares();
+        if (board[index] != 0) {
+            System.out.println("Error, spot on board is already filled");
+            System.exit(1);
+        }
+
         this.board[index] = currentPlayer.getMarker();
 
-        for (Integer i = 0; i < board.length; i++) {
-            if (board[i] == 0 && !availableSquares.contains(i)) {
-                availableSquares.add(i);
-            } else if (availableSquares.contains(i)) {
-                availableSquares.remove(i);
-            }
-        }
+        updateAvailableSquares();
     }
 
     public void resetSquare(int index) {
@@ -66,49 +70,59 @@ public class Board {
      *
      * @return true or false depending on if currentPlayer has one
      */
-    public boolean checkCurrentPlayerIsWinner(Player currentPlayer) {
+    public boolean checkPlayerIsWinner(Player incomingPlayer) {
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
-        return winConfig.containsKey(convertPlayerMarkers(currentPlayer))
-                || currentPlayer.getMarkerCount() >= 5;
+        int[] bo = getPlayerMarkers(incomingPlayer);
 
-    }
+                // [0 1 2 3 4 5 6 7 8]
 
-    /**
-     * Add all winning configurations to winConfig
-     */
-    private void populateWinConfig() {
-        // horizontal wins
-        winConfig.put("111000000", null);
-        winConfig.put("000111000", null);
-        winConfig.put("000000111", null);
+                //  0 1 2
+                //  3 4 5
+                //  6 7 8
 
-        // vertical wins
-        winConfig.put("100100100", null);
-        winConfig.put("010010010", null);
-        winConfig.put("001001001", null);
+                // horizontal wins
+        return  (bo[0] == bo[1] && bo[0] == bo[2] && bo[0] == 1) ||
+                (bo[3] == bo[4] && bo[3] == bo[5] && bo[3] == 1) ||
+                (bo[6] == bo[7] && bo[6] == bo[8] && bo[6] == 1) ||
 
-        // diagonal wins
-        winConfig.put("100010001", null);
-        winConfig.put("001010100", null);
+                // vertical wins
+                (bo[0] == bo[3] && bo[0] == bo[6] && bo[0] == 1) ||
+                (bo[1] == bo[4] && bo[1] == bo[7] && bo[1] == 1) ||
+                (bo[2] == bo[5] && bo[2] == bo[8] && bo[2] == 1) ||
+
+                // diagonal wins
+                (bo[0] == bo[4] && bo[0] == bo[8] && bo[0] == 1) ||
+                (bo[2] == bo[4] && bo[2] == bo[6] && bo[2] == 1) ||
+
+                (incomingPlayer.getMarkerCount() >= 5);
+
     }
 
     /**
      * Convert board into a string of 1's and 0's
      *
-     * @param currentPlayer mark to convert string
+     * @param incomingPlayer mark to convert string
      * @return a string of the board eg. "10110010"
      */
-    private String convertPlayerMarkers(Player currentPlayer) {
-        String playerMarks = "";
+    private int[] getPlayerMarkers(Player incomingPlayer) {
+        int[] playerMarks = new int[9];
 
-        for (int i : board) {
-            if (i == currentPlayer.getMarker()) {
-                playerMarks += "1";
-            } else {
-                playerMarks += "0";
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == incomingPlayer.getMarker()) {
+                playerMarks[i] = 1;
             }
         }
+
+        System.out.print("Curren Board ");
+        for (int i: board) {
+            System.out.print(i);
+        }
+        // System.out.print("\nPlayer marks ");
+        // for (int i: playerMarks) {
+        //     System.out.print(i);
+        // }
+        System.out.println();
 
         return playerMarks;
     }

@@ -25,6 +25,9 @@ public class Game {
         } else {
             player2 = players[1];
         }
+
+        board.setSecretSquare();
+        pickFirstPlayer();
     }
 
     public Player getCurrentPlayer() {
@@ -80,6 +83,10 @@ public class Game {
         celebrityAnswer = answers[index];
     }
 
+    public int getSecretSquare() {
+        return board.getSecretSquare();
+    }
+
     public String getQuestion() {
         return question;
     }
@@ -92,10 +99,13 @@ public class Game {
         return celebrityAnswer.equals(answers[0]);
     }
 
-    public int setSquare(boolean playerAnswer, int index) {
+    public int determineSquareFate(boolean playerAnswer, int index) {
 
         // if the current player has the correct answer, set the square
+        System.out.println("==Determining the Squares fate==");
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
+
+            System.out.println("Marking current player (" + currentPlayer.getUsername() + ") at index " + index);
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
             currentPlayer.incMarkerCount();
@@ -105,26 +115,33 @@ public class Game {
             // wins then reset the square
         } else {
             Player otherPlayer = player1;
+
             if (currentPlayer == otherPlayer) {
                 otherPlayer = player2;
             }
 
             board.setSquare(index, otherPlayer);
-            if (board.checkCurrentPlayerIsWinner(otherPlayer)) {
+
+            System.out.println("Marking other player (" + otherPlayer.getUsername()
+                    + ") and then going to check if he/she has won");
+
+            if (board.checkPlayerIsWinner(otherPlayer)) {
+                System.out.println("Other player wins (" + otherPlayer.getUsername() + ") square is being reset");
                 board.resetSquare(index);
             } else {
+                System.out.println("Other player (" + otherPlayer.getUsername() + ") does not win, square is untoched");
                 otherPlayer.incCurrentScore(1);
                 otherPlayer.incMarkerCount();
                 return otherPlayer.getMarker();
             }
         }
 
-        // Nobody gets the marker on the square square
+        // Nobody gets the marker on the square
         return 0;
     }
 
     public boolean checkCurrentPlayerIsWinner() {
-        if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
+        if (board.checkPlayerIsWinner(currentPlayer)) {
             currentPlayer.addHighScore();
             data.writePlayers();
             return true;

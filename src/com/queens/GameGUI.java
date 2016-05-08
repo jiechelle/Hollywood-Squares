@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class GameGUI {
 
     private static Game game;
-    private Button[] guiBoard;
+    private Button[] boardButtons;
     private Button agree;
     private Button disagree;
     private Button endTurn;
@@ -42,16 +42,16 @@ public class GameGUI {
 
         // Initialize game and pick the first player
         game = new Game(data, players);
-        game.pickFirstPlayer();
 
         initializeButtonsAndText();
 
-        for (Integer i = 0; i < guiBoard.length; i++) {
-            guiBoard[i] = new Button();
-            guiBoard[i].setPrefSize(100, 100);
-            guiBoard[i].setId(Integer.toString(i));
+        // Initialize boardButtons buttons
+        for (Integer i = 0; i < boardButtons.length; i++) {
+            boardButtons[i] = new Button();
+            boardButtons[i].setPrefSize(100, 100);
+            boardButtons[i].setId(Integer.toString(i));
 
-            guiBoard[i].setOnAction(e -> {
+            boardButtons[i].setOnAction(e -> {
 
                 selectedSquare = Integer.parseInt(((Control) e.getSource()).getId());
                 game.selectQuestionAndAnswers();
@@ -63,31 +63,28 @@ public class GameGUI {
 
                 agree.setVisible(true);
                 disagree.setVisible(true);
-                for (Button aGuiBoard : guiBoard) {
-                    aGuiBoard.setDisable(true);
+                for (Button guiBoardSquare : boardButtons) {
+                    guiBoardSquare.setDisable(true);
                 }
             });
         }
 
-        agree.setPrefSize(100, 20);
         agree.setOnAction(e -> {
             endTurn.setVisible(true);
-            playerFeedback(game.setSquare(true, selectedSquare));
+            playerFeedback(game.determineSquareFate(true, selectedSquare));
         });
 
-        disagree.setPrefSize(100, 20);
         disagree.setOnAction(e -> {
             endTurn.setVisible(true);
-            playerFeedback(game.setSquare(false, selectedSquare));
+            playerFeedback(game.determineSquareFate(false, selectedSquare));
         });
 
-        endTurn.setPrefSize(100, 20);
         endTurn.setOnAction(e -> {
             game.nextPlayer();
 
             if (game.getCurrentPlayer().getUsername().equals("the computer")) {
                 selectedSquare = game.computerSelectSquare();
-                playerFeedback(game.setSquare(game.computerResponse(), selectedSquare));
+                playerFeedback(game.determineSquareFate(game.computerResponse(), selectedSquare));
                 game.nextPlayer();
             }
 
@@ -98,11 +95,13 @@ public class GameGUI {
 
             setPlayerText();
 
-            for (Button guiBoardSquare : guiBoard) {
+            for (Button guiBoardSquare : boardButtons) {
                 if (guiBoardSquare.getText().equals("")) {
                     guiBoardSquare.setDisable(false);
                 }
             }
+
+            // Disable end turn button
             ((Control) e.getSource()).setVisible(false);
         });
 
@@ -124,9 +123,13 @@ public class GameGUI {
         else
             isCorrect.setText("Wrong");
 
-        scores.setText("Scores:    Player1:   " + game.getPlayer1().getCurrentScore() + "      Player2:   " + game.getPlayer2().getCurrentScore());
+        setScoreText();
+
+        System.out.println("GUI about to check if the current player (" +
+                game.getCurrentPlayer().getUsername() + ") is winner");
 
         if (game.checkCurrentPlayerIsWinner()) {
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is winner!\n");
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
             endTurn.setVisible(false);
             celebrityResponse.setVisible(false);
@@ -139,36 +142,43 @@ public class GameGUI {
 
             // if game is restarted then call game.restartGame()
 
-            players[0] = null;
-            players[1] = null;
-            loginGUI.launchLogin(boardStage);
+            // players[0] = null;
+            // players[1] = null;
+            // loginGUI.launchLogin(boardStage);
 
         } else {
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not winner\n");
             endTurn.setVisible(true);
         }
+
         isCorrect.setVisible(true);
         agree.setVisible(false);
         disagree.setVisible(false);
 
-        // Disable all buttons on guiBoard when agree or disagree is pressed
-        for (int j = 0; j < guiBoard.length; j++) {
-            guiBoard[j].setDisable(true);
+        // Disable all buttons on boardButtons when agree or disagree is pressed
+        for (int j = 0; j < boardButtons.length; j++) {
+            boardButtons[j].setDisable(true);
 
             if (j == selectedSquare && answer != 0) {
                 if (answer == 1)
-                    guiBoard[j].setText("X");
+                    boardButtons[j].setText("X");
                 else
-                    guiBoard[j].setText("O");
+                    boardButtons[j].setText("O");
             }
         }
     }
 
     private void initializeButtonsAndText() {
         // Initialize buttons
-        guiBoard = new Button[9];
+        boardButtons = new Button[9];
         agree = new Button("True");
         disagree = new Button("False");
         endTurn = new Button("End Turn");
+
+        // set size of buttons
+        agree.setPrefSize(100, 20);
+        disagree.setPrefSize(100, 20);
+        endTurn.setPrefSize(100, 20);
 
         // Hide agree, disagree and endTurn buttons
         agree.setVisible(false);
@@ -187,6 +197,7 @@ public class GameGUI {
         isCorrect.setVisible(false);
 
         setPlayerText();
+        setScoreText();
     }
 
     private VBox createGameBox() {
@@ -212,11 +223,11 @@ public class GameGUI {
         thirdRowSquares.setAlignment(Pos.CENTER);
 
         HBox trueOrFalseBox = new HBox(20);
-        trueOrFalseBox.setAlignment(Pos.TOP_CENTER);
+        trueOrFalseBox.setAlignment(Pos.CENTER);
 
-        firstRowSquares.getChildren().addAll(guiBoard[0], guiBoard[1], guiBoard[2]);
-        secondRowSquares.getChildren().addAll(guiBoard[3], guiBoard[4], guiBoard[5]);
-        thirdRowSquares.getChildren().addAll(guiBoard[6], guiBoard[7], guiBoard[8]);
+        firstRowSquares.getChildren().addAll(boardButtons[0], boardButtons[1], boardButtons[2]);
+        secondRowSquares.getChildren().addAll(boardButtons[3], boardButtons[4], boardButtons[5]);
+        thirdRowSquares.getChildren().addAll(boardButtons[6], boardButtons[7], boardButtons[8]);
 
         scoreBox.getChildren().addAll(scores);
         questionBox.getChildren().addAll(question);
@@ -229,10 +240,13 @@ public class GameGUI {
     }
 
     private void setPlayerText() {
-        if (game.getCurrentPlayer() == game.getPlayer1())
-            currentPlayer.setText("Player 1: marker " + game.getPlayer1().getMarkerLetter());
-        else
-            currentPlayer.setText("Player 2: marker " + game.getPlayer2().getMarkerLetter());
+        currentPlayer.setText(game.getCurrentPlayer().getUsername() + " turn");
+    }
+
+    private void setScoreText() {
+        scores.setText("Scores:    " +
+                game.getPlayer1().getUsername() + " (" + game.getPlayer1().getMarkerLetter() + "):   " + game.getPlayer1().getCurrentScore() + "        " +
+                game.getPlayer2().getUsername() + " (" + game.getPlayer2().getMarkerLetter() + "):   "  + game.getPlayer2().getCurrentScore());
     }
 
 }
