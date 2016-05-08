@@ -135,8 +135,6 @@ public class Game {
 
     public int computerSelectSquare() {
         int index = new Random().nextInt(board.getAvailableSquares().size());
-        System.out.println(board.getAvailableSquares().get(index));
-
         return board.getAvailableSquares().get(index);
     }
 

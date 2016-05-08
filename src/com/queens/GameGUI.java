@@ -1,11 +1,13 @@
 package com.queens;
 
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class GameGUI {
@@ -15,6 +17,7 @@ public class GameGUI {
     private Button agree;
     private Button disagree;
     private Button endTurn;
+    private Text scores;
     private Text question;
     private Text celebrityResponse;
     private Text isCorrect;
@@ -28,9 +31,9 @@ public class GameGUI {
     private Player[] players = new Player[2];
     private static LoginGUI loginGUI;
 
-    public GameGUI(DataFile data,Player[] players, LoginGUI iloginGUI) {
-        this.data = data;
-        this.players=players;
+    public GameGUI(DataFile iData,Player[] iPlayers, LoginGUI iloginGUI) {
+        data = iData;
+        players = iPlayers;
         loginGUI = iloginGUI;
     }
 
@@ -104,9 +107,12 @@ public class GameGUI {
         });
 
 
-        gameScene = new Scene(createGameBox(), 600, 500);
+        gameScene = new Scene(createGameBox(), 700, 600);
 
-        boardStage.setTitle("Home");
+        Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        boardStage.setTitle("Hollywood Squares");
+        boardStage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 3);
+        boardStage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
         boardStage.setScene(gameScene);
         boardStage.setResizable(true);
         boardStage.show();
@@ -117,6 +123,8 @@ public class GameGUI {
             isCorrect.setText("Correct");
         else
             isCorrect.setText("Wrong");
+
+        scores.setText("Scores:    Player1:   " + game.getPlayer1().getCurrentScore() + "      Player2:   " + game.getPlayer2().getCurrentScore());
 
         if (game.checkCurrentPlayerIsWinner()) {
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
@@ -172,6 +180,7 @@ public class GameGUI {
         celebrityResponse = new Text();
         isCorrect = new Text();
         currentPlayer = new Text();
+        scores = new Text();
 
         // Hide celebrityResponse and isCorrect text fields
         celebrityResponse.setVisible(false);
@@ -183,6 +192,9 @@ public class GameGUI {
     private VBox createGameBox() {
         VBox gameBox = new VBox(20);
         gameBox.setAlignment(Pos.CENTER);
+
+        HBox scoreBox = new HBox(20);
+        scoreBox.setAlignment(Pos.CENTER);
 
         HBox questionBox = new HBox(20);
         questionBox.setAlignment(Pos.CENTER);
@@ -205,11 +217,13 @@ public class GameGUI {
         firstRowSquares.getChildren().addAll(guiBoard[0], guiBoard[1], guiBoard[2]);
         secondRowSquares.getChildren().addAll(guiBoard[3], guiBoard[4], guiBoard[5]);
         thirdRowSquares.getChildren().addAll(guiBoard[6], guiBoard[7], guiBoard[8]);
+
+        scoreBox.getChildren().addAll(scores);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
         trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn);
 
-        gameBox.getChildren().addAll(questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
+        gameBox.getChildren().addAll(scoreBox, questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
         return gameBox;
     }
