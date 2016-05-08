@@ -42,7 +42,6 @@ public class GameGUI {
 
         // Initialize game and pick the first player
         game = new Game(data, players);
-        game.pickFirstPlayer();
 
         initializeButtonsAndText();
 

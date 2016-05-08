@@ -25,6 +25,9 @@ public class Game {
         } else {
             player2 = players[1];
         }
+
+        board.setSecretSquare();
+        pickFirstPlayer();
     }
 
     public Player getCurrentPlayer() {
@@ -80,6 +83,10 @@ public class Game {
         celebrityAnswer = answers[index];
     }
 
+    public int getSecretSquare() {
+        return board.getSecretSquare();
+    }
+
     public String getQuestion() {
         return question;
     }
@@ -96,7 +103,8 @@ public class Game {
 
         // if the current player has the correct answer, set the square
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
-            System.out.println("Marking Current Player " + currentPlayer.getUsername());
+
+            System.out.println("Marking current player " + currentPlayer.getUsername() + " at index " + index);
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
             currentPlayer.incMarkerCount();
@@ -113,11 +121,11 @@ public class Game {
 
             board.setSquare(index, otherPlayer);
 
-            System.out.println("CHECKING IF OTHER PLAYER WINS IF I MARK THEIR SQUARE " + otherPlayer.getUsername() + " "
+            System.out.println("Marking other player " + otherPlayer.getUsername() + " "
                     + board.checkPlayerIsWinner(otherPlayer));
 
             if (board.checkPlayerIsWinner(otherPlayer)) {
-                System.out.println("RESET");
+                System.out.println("Other player wins, reset the square");
                 board.resetSquare(index);
             } else {
                 otherPlayer.incCurrentScore(1);

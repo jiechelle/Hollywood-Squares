@@ -1,9 +1,7 @@
 package com.queens;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class Board {
     private int[] board;
@@ -12,7 +10,6 @@ public class Board {
 
     public Board() {
         board = new int[9];
-        secretSquare = new Random().nextInt(9);
         availableSquares = new ArrayList<>();
 
         checkAvailableSquares();
@@ -43,6 +40,14 @@ public class Board {
         }
     }
 
+    public void setSecretSquare() {
+        secretSquare = new Random().nextInt(9);
+    }
+
+    public int getSecretSquare() {
+        return secretSquare;
+    }
+
     public void setSquare(int index, Player currentPlayer) {
         checkAvailableSquares();
 
@@ -65,21 +70,27 @@ public class Board {
     public boolean checkPlayerIsWinner(Player incomingPlayer) {
         // convert board of players marks into a string then check if it is a
         // winning config or if the xCount is greater than 5.
-        String bo = convertPlayerMarkers(incomingPlayer);
+        int[] bo = getPlayerMarkers(incomingPlayer);
+
+                // [0 1 2 3 4 5 6 7 8]
+
+                //  0 1 2
+                //  3 4 5
+                //  6 7 8
 
                 // horizontal wins
-        return  (bo.charAt(0) == bo.charAt(1) && bo.charAt(0) == bo.charAt(2) && bo.charAt(0) == 1) ||
-                (bo.charAt(3) == bo.charAt(4) && bo.charAt(3) == bo.charAt(5) && bo.charAt(3) == 1) ||
-                (bo.charAt(6) == bo.charAt(7) && bo.charAt(6) == bo.charAt(8) && bo.charAt(6) == 1) ||
+        return  (bo[0] == bo[1] && bo[0] == bo[2] && bo[0] == 1) ||
+                (bo[3] == bo[4] && bo[3] == bo[5] && bo[3] == 1) ||
+                (bo[6] == bo[7] && bo[6] == bo[8] && bo[6] == 1) ||
 
                 // vertical wins
-                (bo.charAt(0) == bo.charAt(3) && bo.charAt(0) == bo.charAt(5) && bo.charAt(0) == 1) ||
-                (bo.charAt(1) == bo.charAt(4) && bo.charAt(1) == bo.charAt(7) && bo.charAt(1) == 1) ||
-                (bo.charAt(2) == bo.charAt(5) && bo.charAt(2) == bo.charAt(8) && bo.charAt(2) == 1) ||
+                (bo[0] == bo[3] && bo[0] == bo[5] && bo[0] == 1) ||
+                (bo[1] == bo[4] && bo[1] == bo[7] && bo[1] == 1) ||
+                (bo[2] == bo[5] && bo[2] == bo[8] && bo[2] == 1) ||
 
                 // diagonal wins
-                (bo.charAt(0) == bo.charAt(4) && bo.charAt(0) == bo.charAt(8) && bo.charAt(0) == 1) ||
-                (bo.charAt(2) == bo.charAt(2) && bo.charAt(2) == bo.charAt(6) && bo.charAt(2) == 1) ||
+                (bo[0] == bo[4] && bo[0] == bo[8] && bo[0] == 1) ||
+                (bo[2] == bo[4] && bo[2] == bo[6] && bo[2] == 1) ||
 
                 (incomingPlayer.getMarkerCount() >= 5);
 
@@ -91,14 +102,12 @@ public class Board {
      * @param incomingPlayer mark to convert string
      * @return a string of the board eg. "10110010"
      */
-    private String convertPlayerMarkers(Player incomingPlayer) {
-        String playerMarks = "";
+    private int[] getPlayerMarkers(Player incomingPlayer) {
+        int[] playerMarks = new int[9];
 
-        for (int i : board) {
-            if (i == incomingPlayer.getMarker()) {
-                playerMarks += "1";
-            } else {
-                playerMarks += "0";
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == incomingPlayer.getMarker()) {
+                playerMarks[i] = 1;
             }
         }
 
@@ -106,7 +115,12 @@ public class Board {
         for (int i: board) {
             System.out.print(i);
         }
-        System.out.println("\nPlayer marks " + playerMarks + "\n");
+        System.out.print("\nPlayer marks ");
+        for (int i: playerMarks) {
+            System.out.print(i);
+        }
+        System.out.println();
+
         return playerMarks;
     }
 
