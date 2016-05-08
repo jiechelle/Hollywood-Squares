@@ -37,6 +37,13 @@ public class Board {
         return board;
     }
 
+    public void resetBoard() {
+
+        for (int i = 0; i < board.length; i++) {
+            board[i] = 0;
+        }
+    }
+
     public void setSquare(int index, Player currentPlayer) {
         checkAvailableSquares();
         this.board[index] = currentPlayer.getMarker();

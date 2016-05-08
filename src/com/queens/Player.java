@@ -28,6 +28,18 @@ public class Player {
         this.markerCount++;
     }
 
+    public void resetMarkerCount() {
+        this.markerCount = 0;
+    }
+
+    public String getMarkerLetter() {
+        if (getMarker() == 1) {
+            return "X";
+        }
+
+        return "O";
+    }
+
     public int getMarker() {
         return marker;
     }
@@ -50,6 +62,10 @@ public class Player {
 
     public void incCurrentScore(int play) {
         this.currentScore += play;
+    }
+
+    public void resetCurrentScore() {
+        this.currentScore = 0;
     }
 
     public ArrayList<Integer> getHighScores() {

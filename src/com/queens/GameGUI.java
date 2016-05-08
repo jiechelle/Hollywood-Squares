@@ -23,15 +23,15 @@ public class GameGUI {
 
     private Stage boardStage;
     private Scene gameScene;
+
     private static DataFile data;
     private Player[] players = new Player[2];
+    private static LoginGUI loginGUI;
 
-    LoginGUI loginGUI;
-
-    public GameGUI(DataFile data,Player[] players, LoginGUI loginGUI) {
+    public GameGUI(DataFile data,Player[] players, LoginGUI iloginGUI) {
         this.data = data;
         this.players=players;
-        this.loginGUI = loginGUI;
+        loginGUI = iloginGUI;
     }
 
     public void launchGame(Stage stage) {
@@ -41,28 +41,7 @@ public class GameGUI {
         game = new Game(data, players);
         game.pickFirstPlayer();
 
-        // Initialize buttons
-        guiBoard = new Button[9];
-        agree = new Button("True");
-        disagree = new Button("False");
-        endTurn = new Button("End Turn");
-
-        // Hide agree, disagree and endTurn buttons
-        agree.setVisible(false);
-        disagree.setVisible(false);
-        endTurn.setVisible(false);
-
-        question = new Text("Please select a square");
-        celebrityResponse = new Text();
-        celebrityResponse.setVisible(false);
-
-        isCorrect = new Text();
-        isCorrect.setVisible(false);
-
-        if (game.getCurrentPlayer().getMarker() == 1)
-            currentPlayer = new Text("Player 1 Mr. X");
-        else
-            currentPlayer = new Text("Player 2 Mrs. O");
+        initializeButtonsAndText();
 
         for (Integer i = 0; i < guiBoard.length; i++) {
             guiBoard[i] = new Button();
@@ -101,16 +80,20 @@ public class GameGUI {
 
         endTurn.setPrefSize(100, 20);
         endTurn.setOnAction(e -> {
+            game.nextPlayer();
+
+            if (game.getCurrentPlayer().getUsername().equals("the computer")) {
+                selectedSquare = game.computerSelectSquare();
+                playerFeedback(game.setSquare(game.computerResponse(), selectedSquare));
+                game.nextPlayer();
+            }
+
             question.setText("Please select a square");
             celebrityResponse.setVisible(false);
             isCorrect.setVisible(false);
             endTurn.setVisible(false);
-            game.nextPlayer();
 
-            if (game.getCurrentPlayer().getMarker() == 1)
-                currentPlayer.setText("Player 1 Mr. X");
-            else
-                currentPlayer.setText("Player 2 Mrs. O");
+            setPlayerText();
 
             for (Button guiBoardSquare : guiBoard) {
                 if (guiBoardSquare.getText().equals("")) {
@@ -138,15 +121,19 @@ public class GameGUI {
         if (game.checkCurrentPlayerIsWinner()) {
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
             endTurn.setVisible(false);
+            celebrityResponse.setVisible(false);
+            currentPlayer.setVisible(false);
+            isCorrect.setVisible(false);
 
             // todo: create dialog pop up box to ask user to choose one of two things ...
             // todo: replay the game with same players OR return to login
-            //return to login, need to reset board state, player state, game state etc..
-            //players[0] = null;
-            //players[1] = null;
-            //reset board state
-            //loginGUI.launchLogin(boardStage);
-            //edit
+            // return to login, need to reset board state, player state, game state etc..
+
+            // if game is restarted then call game.restartGame()
+
+            players[0] = null;
+            players[1] = null;
+            loginGUI.launchLogin(boardStage);
 
         } else {
             endTurn.setVisible(true);
@@ -166,6 +153,31 @@ public class GameGUI {
                     guiBoard[j].setText("O");
             }
         }
+    }
+
+    private void initializeButtonsAndText() {
+        // Initialize buttons
+        guiBoard = new Button[9];
+        agree = new Button("True");
+        disagree = new Button("False");
+        endTurn = new Button("End Turn");
+
+        // Hide agree, disagree and endTurn buttons
+        agree.setVisible(false);
+        disagree.setVisible(false);
+        endTurn.setVisible(false);
+
+        // Initialize text fields
+        question = new Text("Please select a square");
+        celebrityResponse = new Text();
+        isCorrect = new Text();
+        currentPlayer = new Text();
+
+        // Hide celebrityResponse and isCorrect text fields
+        celebrityResponse.setVisible(false);
+        isCorrect.setVisible(false);
+
+        setPlayerText();
     }
 
     private VBox createGameBox() {
@@ -201,4 +213,12 @@ public class GameGUI {
 
         return gameBox;
     }
+
+    private void setPlayerText() {
+        if (game.getCurrentPlayer() == game.getPlayer1())
+            currentPlayer.setText("Player 1: marker " + game.getPlayer1().getMarkerLetter());
+        else
+            currentPlayer.setText("Player 2: marker " + game.getPlayer2().getMarkerLetter());
+    }
+
 }

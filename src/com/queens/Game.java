@@ -25,44 +25,53 @@ public class Game {
         } else {
             player2 = players[1];
         }
-
-        player1.setMarker(1);
-        player2.setMarker(2);
     }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public Player pickFirstPlayer() {
-        Random randomNum = new Random();
-        int result = randomNum.nextInt(2);
-
-        if (result == 0) {
-            currentPlayer = player1;
-        } else {
-            currentPlayer = player2;
-        }
-
-        return currentPlayer;
+    public Player getPlayer1() {
+        return player1;
     }
 
-    public int nextPlayer() {
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public void pickFirstPlayer() {
+        Random randomNum = new Random();
+        int headsOrTails = randomNum.nextInt(2);
+
+        // computer always goes first
+        if (player2.getUsername().equals("the computer")) {
+            headsOrTails = 0;
+        }
+
+        if (headsOrTails == 0) {
+            currentPlayer = player1;
+            player1.setMarker(1);
+
+            player2.setMarker(2);
+        } else {
+            currentPlayer = player2;
+            player2.setMarker(1);
+
+            player1.setMarker(2);
+        }
+    }
+
+    public void nextPlayer() {
         if (currentPlayer == player1) {
             currentPlayer = player2;
-            if (currentPlayer == null && setSquare(computerRasponse(), computerSelectSquare()) != 0) {
-                return computerSelectSquare();
-            }
         } else {
             currentPlayer = player1;
         }
-
-        return -1;
     }
 
     public void selectQuestionAndAnswers() {
         HashMap<String, String[]> randomQuestion = data.getQuestion();
-        for (String key: randomQuestion.keySet()) {
+        for (String key : randomQuestion.keySet()) {
             question = key;
             answers = randomQuestion.get(key);
         }
@@ -84,42 +93,39 @@ public class Game {
     }
 
     public int setSquare(boolean playerAnswer, int index) {
+
+        // if the current player has the correct answer, set the square
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
             currentPlayer.incMarkerCount();
             return currentPlayer.getMarker();
+
+            // else set the square for the otherPlayer but if the otherPlayer
+            // wins then reset the square
         } else {
-            if (currentPlayer == player1) {
-                board.setSquare(index, player2);
-                if (board.checkCurrentPlayerIsWinner(player2)) {
-                    board.resetSquare(index);
-                } else {
-                    player2.incCurrentScore(1);
-                    player2.incMarkerCount();
-                    return player2.getMarker();
-                }
+            Player otherPlayer = player1;
+            if (currentPlayer == otherPlayer) {
+                otherPlayer = player2;
+            }
+
+            board.setSquare(index, otherPlayer);
+            if (board.checkCurrentPlayerIsWinner(otherPlayer)) {
+                board.resetSquare(index);
             } else {
-                board.setSquare(index, player1);
-                player1.incCurrentScore(1);
-                player1.incMarkerCount();
-                if (board.checkCurrentPlayerIsWinner(player1)) {
-                    board.resetSquare(index);
-                } else {
-                    player1.incCurrentScore(1);
-                    player1.incMarkerCount();
-                    return player1.getMarker();
-                }
+                otherPlayer.incCurrentScore(1);
+                otherPlayer.incMarkerCount();
+                return otherPlayer.getMarker();
             }
         }
 
+        // Nobody gets the marker on the square square
         return 0;
     }
 
     public boolean checkCurrentPlayerIsWinner() {
         if (board.checkCurrentPlayerIsWinner(currentPlayer)) {
-            player1.addHighScore();
-            player2.addHighScore();
+            currentPlayer.addHighScore();
             data.writePlayers();
             return true;
         }
@@ -129,10 +135,12 @@ public class Game {
 
     public int computerSelectSquare() {
         int index = new Random().nextInt(board.getAvailableSquares().size());
+        System.out.println(board.getAvailableSquares().get(index));
+
         return board.getAvailableSquares().get(index);
     }
 
-    public boolean computerRasponse() {
+    public boolean computerResponse() {
         Random randomNum = new Random();
         int result = randomNum.nextInt(2);
 
@@ -145,11 +153,16 @@ public class Game {
 
     // todo finish method
     public void restartGame() {
-
+        board.resetBoard();
+        player1.resetMarkerCount();
+        player1.resetCurrentScore();
+        player2.resetMarkerCount();
+        player2.resetCurrentScore();
     }
 
     // todo finish method
     public void endGame() {
+        board.resetBoard();
 
     }
 }
