@@ -1,7 +1,9 @@
 package com.queens;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -10,14 +12,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class LoginGUI {
 
-    // private Scene loginScene;
     private Stage loginStage;
     private Player[] players = new Player[2];
     static DataFile data;
@@ -58,13 +57,35 @@ public class LoginGUI {
         Label userName = new Label("Username:");
         loginPane.add(userName, 0, 1);
         TextField userField = new TextField();
+        userField.setPromptText("Username");
         loginPane.add(userField, 1, 1);
 
         // PASSWORD BOX
-        Label pw = new Label("Password:");
-        loginPane.add(pw, 0, 2);
-        PasswordField pwField = new PasswordField();
-        loginPane.add(pwField, 1, 2);
+        Label password = new Label("Password:");
+        loginPane.add(password, 0, 2);
+        PasswordField passField = new PasswordField();
+        passField.setPromptText("Password");
+        loginPane.add(passField, 1, 2);
+
+        //PASSWORD CONFIRMATION DIALOG BOX
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 10, 10, 10));
+
+        Dialog<String> confirm = new Dialog<>();
+        confirm.setTitle("Password Check");
+        confirm.setHeaderText("Please confirm your password");
+        PasswordField confirmPass = new PasswordField();
+        confirmPass.setPromptText("Password");
+
+        ButtonType loginButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        confirm.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        grid.add(new Label("Password:"), 0, 0);
+        grid.add(confirmPass, 1, 0);
+
+        confirm.getDialogPane().setContent(grid);
 
         // LOGIN BUTTON
         Button logBtn = new Button("Login");
@@ -80,11 +101,24 @@ public class LoginGUI {
         hbBtn2.getChildren().add(rBtn);
         loginPane.add(hbBtn2, 1, 5);
 
+        // Disable boxes until text filled
+        Node loginButton = logBtn;
+        loginButton.setDisable(true);
+
+        Node registerButton = rBtn;
+        registerButton.setDisable(true);
+
+        userField.textProperty().addListener((observable, oldValue, newValue) -> {
+            passField.textProperty().addListener((ob, ov, nv) -> {
+                registerButton.setDisable(nv.trim().isEmpty());
+                loginButton.setDisable(nv.trim().isEmpty());
+            });
+        });
 
         // LOGIN button action
         logBtn.setOnAction(e -> {
             String tempUser = userField.getText();
-            String tempPass = pwField.getText();
+            String tempPass = passField.getText();
 
             if (data.checkPlayerCredentials(tempUser, tempPass)) {
 
@@ -131,13 +165,13 @@ public class LoginGUI {
                         // GO BACK TO LOGIN SCREEN AND REGISTER PLAYER 2
                     } else if (result.get() == buttonTypeTwo) {
                         userField.clear();
-                        pwField.clear();
+                        passField.clear();
                         scenetitle.setText("Player 2 - Please Login");
 
                         // USER PRESSED X OR CANCEL, reset player 0
                     } else {
                         players[0] = null;
-                        pwField.clear();
+                        passField.clear();
                     }
                 }
             } else {
@@ -145,45 +179,61 @@ public class LoginGUI {
                 loginAlert.setHeaderText("Username or password incorrect");
                 loginAlert.setContentText("Are you registered?");
                 loginAlert.showAndWait();
-                pwField.clear();
+                passField.clear();
             }
         });
 
         // REGISTER button action
         rBtn.setOnAction(e -> {
+
             String tempUser = userField.getText();
-            String tempPass = pwField.getText();
+            String tempPass = passField.getText();
+            Platform.runLater(() -> confirmPass.requestFocus());
 
-            try {
-                data.addPlayer(tempUser,tempPass);
-                System.out.println("Account " + tempUser + " successfully created");
-                data.writePlayers();
+            Optional<String> dialog = confirm.showAndWait();
+            if (dialog.isPresent()) {
+                if (tempPass.equals(confirmPass.getText())) {
+                    try {
+                        data.addPlayer(tempUser, tempPass);
+                        data.writePlayers();
+                        loginAlert.setTitle("Registration");
+                        loginAlert.setHeaderText("Registration Successful");
+                        loginAlert.setContentText("You can now login with your account");
+                        loginAlert.showAndWait();
 
-            }catch(ValidationException e0){
-                loginAlert.setTitle("Registration Error");
-                loginAlert.setHeaderText("");
-                loginAlert.setContentText("Text fields cannot have blank spaces");
-                loginAlert.showAndWait();
-                pwField.clear();
-                userField.clear();
+                    } catch (ValidationException e0) {
+                        loginAlert.setTitle("Registration Error");
+                        loginAlert.setHeaderText("");
+                        loginAlert.setContentText("Text fields cannot have blank spaces");
+                        loginAlert.showAndWait();
+                        passField.clear();
+                        userField.clear();
 
-            } catch(SecurityException e2){
-                loginAlert.setTitle("Registration Error");
-                loginAlert.setHeaderText("");
-                loginAlert.setContentText("Text fields cannot be empty!");
-                loginAlert.showAndWait();
+                    } catch (SecurityException e1) {
+                        loginAlert.setTitle("Registration Error");
+                        loginAlert.setHeaderText("");
+                        loginAlert.setContentText("Text fields cannot be empty!");
+                        loginAlert.showAndWait();
 
-            } catch(Exception e1) {
-                loginAlert.setTitle("Registration Error");
-                loginAlert.setHeaderText("Username already taken");
-                loginAlert.setContentText("Please try again");
-                loginAlert.showAndWait();
-                pwField.clear();
-                userField.clear();
+                    } catch (Exception e2) {
+                        loginAlert.setTitle("Registration Error");
+                        loginAlert.setHeaderText("Username " + tempUser + " is already taken");
+                        loginAlert.setContentText("Please try an alternative");
+                        loginAlert.showAndWait();
+                        passField.clear();
+                        userField.clear();
+                    }
+                } else if (!tempPass.equals(confirmPass.getText())) {
+                    loginAlert.setTitle("Registration Error");
+                    loginAlert.setHeaderText("Password fields did not match");
+                    loginAlert.setContentText("Please type carefully");
+                    loginAlert.showAndWait();
+                    confirmPass.clear();
+                }
             }
         });
 
-        Scene loginScene = new Scene(loginPane, 300, 270);
+        Scene loginScene = new Scene(loginPane, 340, 250);
         loginStage.setTitle("Hollywood Squares");
         loginStage.setScene(loginScene);
         loginStage.setResizable(true);
