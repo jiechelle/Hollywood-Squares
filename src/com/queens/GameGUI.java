@@ -123,13 +123,13 @@ public class GameGUI {
         else
             isCorrect.setText("Wrong");
 
-        scores.setText("Scores:    " + game.getPlayer1().getUsername() + ":   " + game.getPlayer1().getCurrentScore() + "        " + game.getPlayer2().getUsername() + ":   "  + game.getPlayer2().getCurrentScore());
+        setScoreText();
 
-        System.out.println("GUI about to check if the current player is winner " +
-                game.getCurrentPlayer().getUsername() + " " + game.checkCurrentPlayerIsWinner());
+        System.out.println("GUI about to check if the current player (" +
+                game.getCurrentPlayer().getUsername() + ") is winner");
 
         if (game.checkCurrentPlayerIsWinner()) {
-            System.out.println(game.getCurrentPlayer().getUsername() + " is the winner!");
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is winner!\n");
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
             endTurn.setVisible(false);
             celebrityResponse.setVisible(false);
@@ -147,6 +147,7 @@ public class GameGUI {
             // loginGUI.launchLogin(boardStage);
 
         } else {
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not winner\n");
             endTurn.setVisible(true);
         }
 
@@ -196,6 +197,7 @@ public class GameGUI {
         isCorrect.setVisible(false);
 
         setPlayerText();
+        setScoreText();
     }
 
     private VBox createGameBox() {
@@ -221,7 +223,7 @@ public class GameGUI {
         thirdRowSquares.setAlignment(Pos.CENTER);
 
         HBox trueOrFalseBox = new HBox(20);
-        trueOrFalseBox.setAlignment(Pos.TOP_CENTER);
+        trueOrFalseBox.setAlignment(Pos.CENTER);
 
         firstRowSquares.getChildren().addAll(boardButtons[0], boardButtons[1], boardButtons[2]);
         secondRowSquares.getChildren().addAll(boardButtons[3], boardButtons[4], boardButtons[5]);
@@ -238,7 +240,13 @@ public class GameGUI {
     }
 
     private void setPlayerText() {
-        currentPlayer.setText("Player " + game.getCurrentPlayer().getUsername() + ": marker " + game.getCurrentPlayer().getMarkerLetter());
+        currentPlayer.setText(game.getCurrentPlayer().getUsername() + " turn");
+    }
+
+    private void setScoreText() {
+        scores.setText("Scores:    " +
+                game.getPlayer1().getUsername() + " (" + game.getPlayer1().getMarkerLetter() + "):   " + game.getPlayer1().getCurrentScore() + "        " +
+                game.getPlayer2().getUsername() + " (" + game.getPlayer2().getMarkerLetter() + "):   "  + game.getPlayer2().getCurrentScore());
     }
 
 }

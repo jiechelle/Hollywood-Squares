@@ -12,21 +12,23 @@ public class Board {
         board = new int[9];
         availableSquares = new ArrayList<>();
 
-        checkAvailableSquares();
+        updateAvailableSquares();
     }
 
     public ArrayList<Integer> getAvailableSquares() {
         return availableSquares;
     }
 
-    public void checkAvailableSquares() {
+    public void updateAvailableSquares() {
         for (int i = 0; i < board.length; i++) {
-            if (board[i] == 0) {
+            if (board[i] == 0 && !availableSquares.contains(i)) {
                 availableSquares.add(i);
-            } else if (availableSquares.contains(i)) {
+            } else if (board[i] != 0 && availableSquares.contains(i)) {
                 availableSquares.remove(i);
             }
         }
+
+        System.out.println("AvailableSquaresIndexes " + availableSquares);
     }
 
     public int[] getBoard() {
@@ -49,13 +51,14 @@ public class Board {
     }
 
     public void setSquare(int index, Player currentPlayer) {
-        checkAvailableSquares();
-
         if (board[index] != 0) {
             System.out.println("Error, spot on board is already filled");
+            System.exit(1);
         }
 
         this.board[index] = currentPlayer.getMarker();
+
+        updateAvailableSquares();
     }
 
     public void resetSquare(int index) {
@@ -84,7 +87,7 @@ public class Board {
                 (bo[6] == bo[7] && bo[6] == bo[8] && bo[6] == 1) ||
 
                 // vertical wins
-                (bo[0] == bo[3] && bo[0] == bo[5] && bo[0] == 1) ||
+                (bo[0] == bo[3] && bo[0] == bo[6] && bo[0] == 1) ||
                 (bo[1] == bo[4] && bo[1] == bo[7] && bo[1] == 1) ||
                 (bo[2] == bo[5] && bo[2] == bo[8] && bo[2] == 1) ||
 
@@ -115,10 +118,10 @@ public class Board {
         for (int i: board) {
             System.out.print(i);
         }
-        System.out.print("\nPlayer marks ");
-        for (int i: playerMarks) {
-            System.out.print(i);
-        }
+        // System.out.print("\nPlayer marks ");
+        // for (int i: playerMarks) {
+        //     System.out.print(i);
+        // }
         System.out.println();
 
         return playerMarks;

@@ -24,6 +24,7 @@ public class DataFile {
     public DataFile() {
         players = new HashMap<>();
         questions = new HashMap<>();
+        getData();
     }
 
     public Player getPlayer(String username) {
