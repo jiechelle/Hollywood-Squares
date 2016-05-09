@@ -102,10 +102,11 @@ public class Game {
     public int determineSquareFate(boolean playerAnswer, int index) {
 
         // if the current player has the correct answer, set the square
-        System.out.println("==Determining the Squares fate==");
+        System.out.println("== Determining the Squares fate ==");
+        System.out.println("Current player (" + currentPlayer.getUsername() + ") selected square " + index);
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
 
-            System.out.println("Marking current player (" + currentPlayer.getUsername() + ") at index " + index);
+            System.out.println("Marking current player (" + currentPlayer.getUsername() + ")");
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
             currentPlayer.incMarkerCount();
@@ -126,10 +127,10 @@ public class Game {
                     + ") and then going to check if he/she has won");
 
             if (board.checkPlayerIsWinner(otherPlayer)) {
-                System.out.println("Other player wins (" + otherPlayer.getUsername() + ") square is being reset");
+                System.out.println("Other player wins if the square is set (" + otherPlayer.getUsername() + ") square will now be being reset");
                 board.resetSquare(index);
             } else {
-                System.out.println("Other player (" + otherPlayer.getUsername() + ") does not win, square is untoched");
+                System.out.println("Other player (" + otherPlayer.getUsername() + ") does not win, square is untouched");
                 otherPlayer.incCurrentScore(1);
                 otherPlayer.incMarkerCount();
                 return otherPlayer.getMarker();

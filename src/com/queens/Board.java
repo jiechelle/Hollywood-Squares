@@ -13,6 +13,7 @@ public class Board {
         availableSquares = new ArrayList<>();
 
         updateAvailableSquares();
+        System.out.println();
     }
 
     public ArrayList<Integer> getAvailableSquares() {
@@ -20,15 +21,15 @@ public class Board {
     }
 
     public void updateAvailableSquares() {
+        availableSquares = new ArrayList<>();
+
         for (int i = 0; i < board.length; i++) {
-            if (board[i] == 0 && !availableSquares.contains(i)) {
+            if (board[i] == 0) {
                 availableSquares.add(i);
-            } else if (board[i] != 0 && availableSquares.contains(i)) {
-                availableSquares.remove(i);
             }
         }
 
-        System.out.println("AvailableSquaresIndexes " + availableSquares);
+        System.out.println("Available squares " + availableSquares);
     }
 
     public int[] getBoard() {
@@ -114,7 +115,7 @@ public class Board {
             }
         }
 
-        System.out.print("Curren Board ");
+        System.out.print("Board: ");
         for (int i: board) {
             System.out.print(i);
         }
