@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 
 public class GameGUI {
 
-    private static Game game;
     private Button[] boardButtons;
     private Button agree;
     private Button disagree;
@@ -27,9 +26,10 @@ public class GameGUI {
     private Stage boardStage;
     private Scene gameScene;
 
+    private static Game game;
     private static DataFile data;
-    private Player[] players = new Player[2];
     private static LoginGUI loginGUI;
+    private Player[] players = new Player[2];
 
     public GameGUI(DataFile iData,Player[] iPlayers, LoginGUI iloginGUI) {
         data = iData;
@@ -40,7 +40,7 @@ public class GameGUI {
     public void launchGame(Stage stage) {
         boardStage = stage;
 
-        // Initialize game and pick the first player
+        // Initialize game, pick the first player and secret square
         game = new Game(data, players);
 
         initializeButtonsAndText();
@@ -54,7 +54,11 @@ public class GameGUI {
             boardButtons[i].setOnAction(e -> {
 
                 selectedSquare = Integer.parseInt(((Control) e.getSource()).getId());
-                game.selectQuestionAndAnswers();
+
+                // When square is clicked, pick a question from the file
+                game.selectQuestion();
+
+                //
                 question.setText(game.getQuestion());
                 celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
                 celebrityResponse.setVisible(true);
@@ -131,6 +135,7 @@ public class GameGUI {
         if (game.checkCurrentPlayerIsWinner()) {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is winner!\n");
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
+
             endTurn.setVisible(false);
             celebrityResponse.setVisible(false);
             currentPlayer.setVisible(false);

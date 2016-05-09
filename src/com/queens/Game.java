@@ -46,7 +46,7 @@ public class Game {
         Random randomNum = new Random();
         int headsOrTails = randomNum.nextInt(2);
 
-        // computer always goes first
+        // computer always goes second
         if (player2.getUsername().equals("the computer")) {
             headsOrTails = 0;
         }
@@ -54,13 +54,13 @@ public class Game {
         if (headsOrTails == 0) {
             currentPlayer = player1;
             player1.setMarker(1);
-
             player2.setMarker(2);
+
         } else {
             currentPlayer = player2;
             player2.setMarker(1);
-
             player1.setMarker(2);
+
         }
     }
 
@@ -72,15 +72,11 @@ public class Game {
         }
     }
 
-    public void selectQuestionAndAnswers() {
+    public void selectQuestion() {
         HashMap<String, String[]> randomQuestion = data.getQuestion();
-        for (String key : randomQuestion.keySet()) {
-            question = key;
-            answers = randomQuestion.get(key);
-        }
-
-        int index = new Random().nextInt(answers.length);
-        celebrityAnswer = answers[index];
+        question = (String) (randomQuestion.keySet().toArray())[0];
+        answers = randomQuestion.get(question);
+        celebrityAnswer = answers[new Random().nextInt(answers.length)];
     }
 
     public int getSecretSquare() {
@@ -101,9 +97,10 @@ public class Game {
 
     public int determineSquareFate(boolean playerAnswer, int index) {
 
-        // if the current player has the correct answer, set the square
         System.out.println("== Determining the Squares fate ==");
         System.out.println("Current player (" + currentPlayer.getUsername() + ") selected square " + index);
+
+        // if the current player has the correct answer, set the square
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {
 
             System.out.println("Marking current player (" + currentPlayer.getUsername() + ")");
@@ -115,30 +112,32 @@ public class Game {
             // else set the square for the otherPlayer but if the otherPlayer
             // wins then reset the square
         } else {
-            Player otherPlayer = player1;
 
+            Player otherPlayer = player1;
             if (currentPlayer == otherPlayer) {
                 otherPlayer = player2;
             }
 
-            board.setSquare(index, otherPlayer);
-
             System.out.println("Marking other player (" + otherPlayer.getUsername()
                     + ") and then going to check if he/she has won");
+
+            board.setSquare(index, otherPlayer);
 
             if (board.checkPlayerIsWinner(otherPlayer)) {
                 System.out.println("Other player wins if the square is set (" + otherPlayer.getUsername() + ") square will now be being reset");
                 board.resetSquare(index);
+
+                // Nobody gets the square
+                return 0;
+
             } else {
                 System.out.println("Other player (" + otherPlayer.getUsername() + ") does not win, square is untouched");
                 otherPlayer.incCurrentScore(1);
                 otherPlayer.incMarkerCount();
+
                 return otherPlayer.getMarker();
             }
         }
-
-        // Nobody gets the marker on the square
-        return 0;
     }
 
     public boolean checkCurrentPlayerIsWinner() {
