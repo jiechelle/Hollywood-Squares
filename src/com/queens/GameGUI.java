@@ -110,12 +110,17 @@ public class GameGUI {
         // Check if the current player is the winner only if the currentPlayer set the Square
         if (squareMarker == game.getCurrentPlayer().getMarker() && game.checkCurrentPlayerIsWinner()) {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is the winner\n");
+
+            // Display winner on GUI
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
 
+            // Hide endTurn Button
             endTurn.setVisible(false);
-            celebrityResponse.setVisible(false);
-            currentPlayer.setVisible(false);
-            isCorrect.setVisible(false);
+
+            // Clear text on screen
+            celebrityResponse.setText("");
+            currentPlayer.setText("");
+            isCorrect.setText("");
 
             // todo: create dialog pop up box to ask user to choose one of two things ...
             // todo: replay the game with same players OR return to login
@@ -128,7 +133,6 @@ public class GameGUI {
         } else {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not the winner\n");
             endTurn.setVisible(true);
-            isCorrect.setVisible(true);
         }
 
         agree.setVisible(false);

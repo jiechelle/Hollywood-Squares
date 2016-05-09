@@ -1,6 +1,6 @@
 jeling abc 0 
 wilson 123 0 
-alex alex 10 5 5 5 5 5 4 3 3 5 5 
+alex alex 11 5 5 5 5 5 4 3 3 5 5 3 
 john doe 0 
 angelo poo 0 
 ivan longd 6 2 5 1 1 3 3 

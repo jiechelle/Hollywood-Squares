@@ -124,6 +124,8 @@ public class Game {
             otherPlayer.incMarkerCount(1);
             otherPlayer.incCurrentScore(1);
 
+            // if the other player wins by setting square then resetSquare and
+            // decrement markerCount and currentScore
             if (board.checkPlayerIsWinner(otherPlayer)) {
                 System.out.println("Other player (" + otherPlayer.getUsername()
                         + ") wins if the square is set, square will now be reset");
@@ -133,6 +135,7 @@ public class Game {
                 otherPlayer.incCurrentScore(-1);
                 return 0;  // Nobody gets the square
 
+            // else the other player does not win with the new square and gets to keep it
             } else {
                 System.out.println("Other player (" + otherPlayer.getUsername()
                         + ") does not win, other player keeps the square");

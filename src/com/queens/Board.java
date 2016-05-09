@@ -57,7 +57,7 @@ public class Board {
         this.board[index] = currentPlayer.getMarker();
 
         updateAvailableSquares();
-        System.out.println("Available squares after selection " + availableSquares);
+        System.out.print("Available squares after selection " + availableSquares);
     }
 
     public void resetSquare(int index) {
@@ -76,7 +76,7 @@ public class Board {
     public boolean checkPlayerIsWinner(Player incomingPlayer) {
         int marker = incomingPlayer.getMarker();
 
-        System.out.print("Board state: ");
+        System.out.print("     Board state: ");
         for (int i: board) {
             System.out.print(i);
         }
