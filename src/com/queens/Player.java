@@ -24,8 +24,8 @@ public class Player {
         return markerCount;
     }
 
-    public void incMarkerCount() {
-        this.markerCount++;
+    public void incMarkerCount(int i) {
+        this.markerCount += i;
     }
 
     public void resetMarkerCount() {

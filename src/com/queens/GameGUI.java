@@ -52,25 +52,8 @@ public class GameGUI {
             boardButtons[i].setId(Integer.toString(i));
 
             boardButtons[i].setOnAction(e -> {
-
                 selectedSquare = Integer.parseInt(((Control) e.getSource()).getId());
-
-                // When square is clicked, pick a question from the file
-                game.selectQuestion();
-
-                // set the Text for question and celebrityResponse
-                question.setText(game.getQuestion());
-                celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
-
-                // set Text and Buttons visible
-                agree.setVisible(true);
-                disagree.setVisible(true);
-                celebrityResponse.setVisible(true);
-
-                // Disable all buttons after one button is clicked
-                for (Button guiBoardSquare : boardButtons) {
-                    guiBoardSquare.setDisable(true);
-                }
+                boardButtonBehavior();
             });
         }
 
@@ -92,11 +75,7 @@ public class GameGUI {
                 game.nextPlayer();
             }
 
-            setTextForPlayer();
-
-            celebrityResponse.setVisible(false);
-            isCorrect.setVisible(false);
-            endTurn.setVisible(false);
+            displayPlayerTurnAndInstructions();
 
             // Enable all buttons that are blank
             for (Button guiBoardSquare : boardButtons) {
@@ -126,13 +105,11 @@ public class GameGUI {
         else
             isCorrect.setText("Wrong");
 
-        setScoreText();
+        displayCurrentScore();
 
-        System.out.println("GUI about to check if the current player (" +
-                game.getCurrentPlayer().getUsername() + ") is winner");
-
-        if (game.checkCurrentPlayerIsWinner()) {
-            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is winner!\n");
+        // Check if the current player is the winner only if the currentPlayer set the Square
+        if (squareMarker == game.getCurrentPlayer().getMarker() && game.checkCurrentPlayerIsWinner()) {
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is the winner\n");
             question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
 
             endTurn.setVisible(false);
@@ -143,15 +120,13 @@ public class GameGUI {
             // todo: create dialog pop up box to ask user to choose one of two things ...
             // todo: replay the game with same players OR return to login
             // return to login, need to reset board state, player state, game state etc..
-
             // if game is restarted then call game.restartGame()
-
             // players[0] = null;
             // players[1] = null;
             // loginGUI.launchLogin(boardStage);
 
         } else {
-            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not winner\n");
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not the winner\n");
             endTurn.setVisible(true);
             isCorrect.setVisible(true);
         }
@@ -164,6 +139,24 @@ public class GameGUI {
             boardButtons[selectedSquare].setText("X");
         else if (squareMarker == 2)
             boardButtons[selectedSquare].setText("O");
+    }
+
+    private void boardButtonBehavior() {
+        // When square is clicked, pick a question from the file
+        game.selectQuestion();
+
+        // set the Text for question and celebrityResponse
+        question.setText(game.getQuestion());
+        celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
+
+        // set Text and Buttons visible
+        agree.setVisible(true);
+        disagree.setVisible(true);
+
+        // Disable all buttons after one button is clicked
+        for (Button guiBoardSquare : boardButtons) {
+            guiBoardSquare.setDisable(true);
+        }
     }
 
     private void initializeButtonsAndText() {
@@ -190,12 +183,8 @@ public class GameGUI {
         isCorrect = new Text();
         currentPlayer = new Text();
 
-        // Hide celebrityResponse and isCorrect text fields
-        celebrityResponse.setVisible(false);
-        isCorrect.setVisible(false);
-
-        setTextForPlayer();
-        setScoreText();
+        displayPlayerTurnAndInstructions();
+        displayCurrentScore();
     }
 
     private VBox createGameBox() {
@@ -237,12 +226,14 @@ public class GameGUI {
         return gameBox;
     }
 
-    private void setTextForPlayer() {
+    private void displayPlayerTurnAndInstructions() {
         question.setText("Please select a square");
+        celebrityResponse.setText("");
+        isCorrect.setText("");
         currentPlayer.setText(game.getCurrentPlayer().getUsername() + " turn");
     }
 
-    private void setScoreText() {
+    private void displayCurrentScore() {
         scores.setText("Scores:    " +
                 game.getPlayer1().getUsername() + " (" + game.getPlayer1().getMarkerLetter() + "):   " + game.getPlayer1().getCurrentScore() + "        " +
                 game.getPlayer2().getUsername() + " (" + game.getPlayer2().getMarkerLetter() + "):   "  + game.getPlayer2().getCurrentScore());

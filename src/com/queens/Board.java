@@ -13,7 +13,6 @@ public class Board {
         availableSquares = new ArrayList<>();
 
         updateAvailableSquares();
-        System.out.println();
     }
 
     public ArrayList<Integer> getAvailableSquares() {
@@ -28,8 +27,6 @@ public class Board {
                 availableSquares.add(i);
             }
         }
-
-        System.out.println("Available squares " + availableSquares);
     }
 
     public int[] getBoard() {
@@ -60,6 +57,7 @@ public class Board {
         this.board[index] = currentPlayer.getMarker();
 
         updateAvailableSquares();
+        System.out.println("Available squares after selection " + availableSquares);
     }
 
     public void resetSquare(int index) {

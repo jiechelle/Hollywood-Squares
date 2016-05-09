@@ -105,7 +105,7 @@ public class Game {
             System.out.println("Marking current player (" + currentPlayer.getUsername() + ")");
             board.setSquare(index, currentPlayer);
             currentPlayer.incCurrentScore(1);
-            currentPlayer.incMarkerCount();
+            currentPlayer.incMarkerCount(1);
             return currentPlayer.getMarker();
 
             // else set the square for the otherPlayer but if the otherPlayer
@@ -121,18 +121,21 @@ public class Game {
                     + ") and then going to check if he/she has won");
 
             board.setSquare(index, otherPlayer);
+            otherPlayer.incMarkerCount(1);
+            otherPlayer.incCurrentScore(1);
 
             if (board.checkPlayerIsWinner(otherPlayer)) {
-                System.out.println("Other player wins if the square is set (" + otherPlayer.getUsername() + ") square will now be being reset");
-                board.resetSquare(index);
+                System.out.println("Other player (" + otherPlayer.getUsername()
+                        + ") wins if the square is set, square will now be reset");
 
-                // Nobody gets the square
-                return 0;
+                board.resetSquare(index);
+                otherPlayer.incMarkerCount(-1);
+                otherPlayer.incCurrentScore(-1);
+                return 0;  // Nobody gets the square
 
             } else {
-                System.out.println("Other player (" + otherPlayer.getUsername() + ") does not win, square is untouched");
-                otherPlayer.incCurrentScore(1);
-                otherPlayer.incMarkerCount();
+                System.out.println("Other player (" + otherPlayer.getUsername()
+                        + ") does not win, other player keeps the square");
 
                 return otherPlayer.getMarker();
             }
