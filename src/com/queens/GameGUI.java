@@ -40,12 +40,12 @@ public class GameGUI {
     public void launchGame(Stage stage) {
         boardStage = stage;
 
-        // Initialize game, pick the first player and secret square
+        // Initialize game
         game = new Game(data, players);
 
         initializeButtonsAndText();
 
-        // Initialize boardButtons buttons
+        // Initialize boardButtons
         for (Integer i = 0; i < boardButtons.length; i++) {
             boardButtons[i] = new Button();
             boardButtons[i].setPrefSize(100, 100);
@@ -58,15 +58,16 @@ public class GameGUI {
                 // When square is clicked, pick a question from the file
                 game.selectQuestion();
 
-                //
+                // set the Text for question and celebrityResponse
                 question.setText(game.getQuestion());
                 celebrityResponse.setText("Celebrity response: " + game.getCelebrityAnswer());
-                celebrityResponse.setVisible(true);
-                agree.setVisible(true);
-                disagree.setVisible(true);
 
+                // set Text and Buttons visible
                 agree.setVisible(true);
                 disagree.setVisible(true);
+                celebrityResponse.setVisible(true);
+
+                // Disable all buttons after one button is clicked
                 for (Button guiBoardSquare : boardButtons) {
                     guiBoardSquare.setDisable(true);
                 }
@@ -74,31 +75,30 @@ public class GameGUI {
         }
 
         agree.setOnAction(e -> {
-            endTurn.setVisible(true);
             playerFeedback(game.determineSquareFate(true, selectedSquare));
         });
 
         disagree.setOnAction(e -> {
-            endTurn.setVisible(true);
             playerFeedback(game.determineSquareFate(false, selectedSquare));
         });
 
         endTurn.setOnAction(e -> {
             game.nextPlayer();
 
+            // if the next player is "the computer" then select a square and then call nextPlayer
             if (game.getCurrentPlayer().getUsername().equals("the computer")) {
                 selectedSquare = game.computerSelectSquare();
                 playerFeedback(game.determineSquareFate(game.computerResponse(), selectedSquare));
                 game.nextPlayer();
             }
 
-            question.setText("Please select a square");
+            setTextForPlayer();
+
             celebrityResponse.setVisible(false);
             isCorrect.setVisible(false);
             endTurn.setVisible(false);
 
-            setPlayerText();
-
+            // Enable all buttons that are blank
             for (Button guiBoardSquare : boardButtons) {
                 if (guiBoardSquare.getText().equals("")) {
                     guiBoardSquare.setDisable(false);
@@ -109,20 +109,19 @@ public class GameGUI {
             ((Control) e.getSource()).setVisible(false);
         });
 
-
         gameScene = new Scene(createGameBox(), 700, 600);
 
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         boardStage.setTitle("Hollywood Squares");
         boardStage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 3);
-        boardStage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+        boardStage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 5);
         boardStage.setScene(gameScene);
         boardStage.setResizable(true);
         boardStage.show();
     }
 
-    private void playerFeedback(int answer) {
-        if (answer == game.getCurrentPlayer().getMarker())
+    private void playerFeedback(int squareMarker) {
+        if (squareMarker == game.getCurrentPlayer().getMarker())
             isCorrect.setText("Correct");
         else
             isCorrect.setText("Wrong");
@@ -154,23 +153,17 @@ public class GameGUI {
         } else {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not winner\n");
             endTurn.setVisible(true);
+            isCorrect.setVisible(true);
         }
 
-        isCorrect.setVisible(true);
         agree.setVisible(false);
         disagree.setVisible(false);
 
-        // Disable all buttons on boardButtons when agree or disagree is pressed
-        for (int j = 0; j < boardButtons.length; j++) {
-            boardButtons[j].setDisable(true);
-
-            if (j == selectedSquare && answer != 0) {
-                if (answer == 1)
-                    boardButtons[j].setText("X");
-                else
-                    boardButtons[j].setText("O");
-            }
-        }
+        // Update marker on square
+        if (squareMarker == 1)
+            boardButtons[selectedSquare].setText("X");
+        else if (squareMarker == 2)
+            boardButtons[selectedSquare].setText("O");
     }
 
     private void initializeButtonsAndText() {
@@ -191,17 +184,17 @@ public class GameGUI {
         endTurn.setVisible(false);
 
         // Initialize text fields
-        question = new Text("Please select a square");
+        scores = new Text();
+        question = new Text();
         celebrityResponse = new Text();
         isCorrect = new Text();
         currentPlayer = new Text();
-        scores = new Text();
 
         // Hide celebrityResponse and isCorrect text fields
         celebrityResponse.setVisible(false);
         isCorrect.setVisible(false);
 
-        setPlayerText();
+        setTextForPlayer();
         setScoreText();
     }
 
@@ -244,7 +237,8 @@ public class GameGUI {
         return gameBox;
     }
 
-    private void setPlayerText() {
+    private void setTextForPlayer() {
+        question.setText("Please select a square");
         currentPlayer.setText(game.getCurrentPlayer().getUsername() + " turn");
     }
 

@@ -8,22 +8,22 @@ public class Game {
 
     private DataFile data;
     private Board board;
+    private Player currentPlayer;
     private Player player1;
     private Player player2;
-    private Player currentPlayer;
     private String question;
     private String[] answers;
     private String celebrityAnswer;
 
-    public Game(DataFile data, Player[] players) {
-        this.data = data;
+    public Game(DataFile iData, Player[] players) {
+        data = iData;
         board = new Board();
         player1 = players[0];
+        player2 = players[1];
 
-        if (players[1] == null) {
+        // if player2 is null then make player2 "the computer"
+        if (player2 == null) {
             player2 = new Player("the computer", "", new ArrayList<>());
-        } else {
-            player2 = players[1];
         }
 
         board.setSecretSquare();
@@ -97,8 +97,7 @@ public class Game {
 
     public int determineSquareFate(boolean playerAnswer, int index) {
 
-        System.out.println("== Determining the Squares fate ==");
-        System.out.println("Current player (" + currentPlayer.getUsername() + ") selected square " + index);
+        System.out.println("-- Current player is " + currentPlayer.getUsername() + ", determining square " + index + "'s fate");
 
         // if the current player has the correct answer, set the square
         if (playerAnswer && checkCelebAnswer() || !playerAnswer && !checkCelebAnswer()) {

@@ -69,63 +69,35 @@ public class Board {
     /**
      * Check if current player has won the game
      *
-     * @return true or false depending on if currentPlayer has one
+     *  0 1 2  |
+     *  3 4 5  |-->  [0 1 2 3 4 5 6 7 8]
+     *  6 7 8  |
+     *
+     * @return true or false depending on if currentPlayer has won
      */
     public boolean checkPlayerIsWinner(Player incomingPlayer) {
-        // convert board of players marks into a string then check if it is a
-        // winning config or if the xCount is greater than 5.
-        int[] bo = getPlayerMarkers(incomingPlayer);
+        int marker = incomingPlayer.getMarker();
 
-                // [0 1 2 3 4 5 6 7 8]
-
-                //  0 1 2
-                //  3 4 5
-                //  6 7 8
-
-                // horizontal wins
-        return  (bo[0] == bo[1] && bo[0] == bo[2] && bo[0] == 1) ||
-                (bo[3] == bo[4] && bo[3] == bo[5] && bo[3] == 1) ||
-                (bo[6] == bo[7] && bo[6] == bo[8] && bo[6] == 1) ||
-
-                // vertical wins
-                (bo[0] == bo[3] && bo[0] == bo[6] && bo[0] == 1) ||
-                (bo[1] == bo[4] && bo[1] == bo[7] && bo[1] == 1) ||
-                (bo[2] == bo[5] && bo[2] == bo[8] && bo[2] == 1) ||
-
-                // diagonal wins
-                (bo[0] == bo[4] && bo[0] == bo[8] && bo[0] == 1) ||
-                (bo[2] == bo[4] && bo[2] == bo[6] && bo[2] == 1) ||
-
-                (incomingPlayer.getMarkerCount() >= 5);
-
-    }
-
-    /**
-     * Convert board into a string of 1's and 0's
-     *
-     * @param incomingPlayer mark to convert string
-     * @return a string of the board eg. "10110010"
-     */
-    private int[] getPlayerMarkers(Player incomingPlayer) {
-        int[] playerMarks = new int[9];
-
-        for (int i = 0; i < board.length; i++) {
-            if (board[i] == incomingPlayer.getMarker()) {
-                playerMarks[i] = 1;
-            }
-        }
-
-        System.out.print("Board: ");
+        System.out.print("Board state: ");
         for (int i: board) {
             System.out.print(i);
         }
-        // System.out.print("\nPlayer marks ");
-        // for (int i: playerMarks) {
-        //     System.out.print(i);
-        // }
         System.out.println();
 
-        return playerMarks;
-    }
+                // horizontal wins
+        return  (board[0] == board[1] && board[0] == board[2] && board[0] == marker) ||
+                (board[3] == board[4] && board[3] == board[5] && board[3] == marker) ||
+                (board[6] == board[7] && board[6] == board[8] && board[6] == marker) ||
 
+                // vertical wins
+                (board[0] == board[3] && board[0] == board[6] && board[0] == marker) ||
+                (board[1] == board[4] && board[1] == board[7] && board[1] == marker) ||
+                (board[2] == board[5] && board[2] == board[8] && board[2] == marker) ||
+
+                // diagonal wins
+                (board[0] == board[4] && board[0] == board[8] && board[0] == marker) ||
+                (board[2] == board[4] && board[2] == board[6] && board[2] == marker) ||
+
+                (incomingPlayer.getMarkerCount() >= 5);
+    }
 }
