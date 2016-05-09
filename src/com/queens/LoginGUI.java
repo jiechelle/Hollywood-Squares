@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 import javax.xml.bind.ValidationException;
 import java.util.Optional;
 
@@ -79,13 +80,17 @@ public class LoginGUI {
         PasswordField confirmPass = new PasswordField();
         confirmPass.setPromptText("Password");
 
-        ButtonType loginButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
-        confirm.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+        ButtonType confirmBtn = new ButtonType("Confirm");
+        ButtonType cancelBtn = new ButtonType("Cancel");
+
+        //ButtonType loginButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        confirm.getDialogPane().getButtonTypes().addAll(confirmBtn, cancelBtn);
 
         grid.add(new Label("Password:"), 0, 0);
         grid.add(confirmPass, 1, 0);
 
         confirm.getDialogPane().setContent(grid);
+
 
         // LOGIN BUTTON
         Button logBtn = new Button("Login");
@@ -101,7 +106,7 @@ public class LoginGUI {
         hbBtn2.getChildren().add(rBtn);
         loginPane.add(hbBtn2, 1, 5);
 
-        // Disable boxes until text filled
+        // Disable password field until previous field filled
         Node loginButton = logBtn;
         loginButton.setDisable(true);
 
@@ -120,9 +125,10 @@ public class LoginGUI {
             String tempUser = userField.getText();
             String tempPass = passField.getText();
 
+            //check if player credentials are valid based on their input
             if (data.checkPlayerCredentials(tempUser, tempPass)) {
 
-                // assign players to array depending on case 1 or case 2
+                // assign verified players to array depending on case 1 or case 2
                 if (players[0] == null) {
                     players[0] = data.getPlayer(tempUser);
 
@@ -190,47 +196,59 @@ public class LoginGUI {
             String tempPass = passField.getText();
             Platform.runLater(() -> confirmPass.requestFocus());
 
-            Optional<String> dialog = confirm.showAndWait();
-            if (dialog.isPresent()) {
-                if (tempPass.equals(confirmPass.getText())) {
-                    try {
-                        data.addPlayer(tempUser, tempPass);
-                        data.writePlayers();
-                        loginAlert.setTitle("Registration");
-                        loginAlert.setHeaderText("Registration Successful");
-                        loginAlert.setContentText("You can now login with your account");
-                        loginAlert.showAndWait();
+            confirm.setResultConverter(button -> {
+                if (button == confirmBtn) {
+                    return "ok";
+                } else if (button == cancelBtn) {
+                    return "cancel";
+                } else return "exit";
+            });
 
-                    } catch (ValidationException e0) {
+            confirm.showAndWait().ifPresent(result -> {
+                if (result == "ok") {
+                    if (tempPass.equals(confirmPass.getText())) {
+                        try {
+                            data.addPlayer(tempUser, tempPass);
+                            data.writePlayers();
+                            loginAlert.setTitle("Registration");
+                            loginAlert.setHeaderText("Registration Successful");
+                            loginAlert.setContentText("You can now login with your account");
+                            loginAlert.showAndWait();
+                            confirmPass.clear();
+
+                        } catch (ValidationException e0) {
+                            loginAlert.setTitle("Registration Error");
+                            loginAlert.setHeaderText("");
+                            loginAlert.setContentText("Text fields cannot have blank spaces");
+                            loginAlert.showAndWait();
+                            passField.clear();
+                            userField.clear();
+
+                        } catch (SecurityException e1) {
+                            loginAlert.setTitle("Registration Error");
+                            loginAlert.setHeaderText("");
+                            loginAlert.setContentText("Text fields cannot be empty!");
+                            loginAlert.showAndWait();
+
+                        } catch (Exception e2) {
+                            loginAlert.setTitle("Registration Error");
+                            loginAlert.setHeaderText("Username " + tempUser + " is already taken");
+                            loginAlert.setContentText("Please try an alternative");
+                            loginAlert.showAndWait();
+                            passField.clear();
+                            userField.clear();
+                        }
+
+                    } else {
                         loginAlert.setTitle("Registration Error");
-                        loginAlert.setHeaderText("");
-                        loginAlert.setContentText("Text fields cannot have blank spaces");
+                        loginAlert.setHeaderText("Password fields did not match");
+                        loginAlert.setContentText("Please type carefully");
                         loginAlert.showAndWait();
+                        confirmPass.clear();
                         passField.clear();
-                        userField.clear();
-
-                    } catch (SecurityException e1) {
-                        loginAlert.setTitle("Registration Error");
-                        loginAlert.setHeaderText("");
-                        loginAlert.setContentText("Text fields cannot be empty!");
-                        loginAlert.showAndWait();
-
-                    } catch (Exception e2) {
-                        loginAlert.setTitle("Registration Error");
-                        loginAlert.setHeaderText("Username " + tempUser + " is already taken");
-                        loginAlert.setContentText("Please try an alternative");
-                        loginAlert.showAndWait();
-                        passField.clear();
-                        userField.clear();
                     }
-                } else if (!tempPass.equals(confirmPass.getText())) {
-                    loginAlert.setTitle("Registration Error");
-                    loginAlert.setHeaderText("Password fields did not match");
-                    loginAlert.setContentText("Please type carefully");
-                    loginAlert.showAndWait();
-                    confirmPass.clear();
                 }
-            }
+            });
         });
 
         Scene loginScene = new Scene(loginPane, 340, 250);
