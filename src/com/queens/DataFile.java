@@ -27,13 +27,21 @@ public class DataFile {
         getData();
     }
 
-    public Player getPlayer(String username) {
-        return players.get(username);
-    }
-
     public void getData() {
+
+        String playersFilePath = "players_data.txt";
+        if (!new File(playersFilePath).exists()) {
+            try {
+                PrintWriter writer = new PrintWriter(playersFilePath, "UTF-8");
+            } catch (Exception e) {
+                System.err.println("Problem creating player_data file");
+                System.exit(1);
+            }
+
+        }
+
         try {
-            playersData = new Scanner(new File("players_data.txt"));
+            playersData = new Scanner(new File(playersFilePath));
             questionsData = new Scanner(new File("questions.txt"));
         } catch (Exception e) {
             System.err.println(String.format("Unexpected error %s", e.getMessage()));
@@ -78,6 +86,10 @@ public class DataFile {
 
         playersData.close();
         questionsData.close();
+    }
+
+    public Player getPlayer(String username) {
+        return players.get(username);
     }
 
     /**
