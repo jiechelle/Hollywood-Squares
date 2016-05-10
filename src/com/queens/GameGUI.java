@@ -72,15 +72,17 @@ public class GameGUI {
             if (game.getCurrentPlayer().getUsername().equals("the computer")) {
                 selectedSquare = game.computerSelectSquare();
                 playerFeedback(game.determineSquareFate(game.computerResponse(), selectedSquare));
-                game.nextPlayer();
             }
 
-            displayPlayerTurnAndInstructions();
+            // for the computer
+            if (!game.checkCurrentPlayerIsWinner()) {
+                displayPlayerTurnAndInstructions();
 
-            // Enable all buttons that are blank
-            for (Button guiBoardSquare : boardButtons) {
-                if (guiBoardSquare.getText().equals("")) {
-                    guiBoardSquare.setDisable(false);
+                // Enable all buttons that are blank
+                for (Button guiBoardSquare : boardButtons) {
+                    if (guiBoardSquare.getText().equals("")) {
+                        guiBoardSquare.setDisable(false);
+                    }
                 }
             }
 
@@ -112,7 +114,7 @@ public class GameGUI {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is the winner\n");
 
             // Display winner on GUI
-            question.setText("Player " + Integer.toString(game.getCurrentPlayer().getMarker()) + " has won");
+            question.setText(game.getCurrentPlayer().getUsername() + " has won");
 
             // Hide endTurn Button
             endTurn.setVisible(false);
@@ -143,6 +145,10 @@ public class GameGUI {
             boardButtons[selectedSquare].setText("X");
         else if (squareMarker == 2)
             boardButtons[selectedSquare].setText("O");
+
+        if (game.getCurrentPlayer().getUsername().equals("the computer") && !game.checkCurrentPlayerIsWinner()) {
+            game.nextPlayer();
+        }
     }
 
     private void boardButtonBehavior() {

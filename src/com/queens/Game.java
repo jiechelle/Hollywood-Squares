@@ -130,6 +130,7 @@ public class Game {
                 System.out.println("Other player (" + otherPlayer.getUsername()
                         + ") wins if the square is set, square will now be reset");
 
+                board.updateAvailableSquares();
                 board.resetSquare(index);
                 otherPlayer.incMarkerCount(-1);
                 otherPlayer.incCurrentScore(-1);
