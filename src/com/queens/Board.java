@@ -58,6 +58,12 @@ public class Board {
 
         updateAvailableSquares();
         System.out.print("Available squares after selection " + availableSquares);
+
+        System.out.print("     Board state: ");
+        for (int i: board) {
+            System.out.print(i);
+        }
+        System.out.println();
     }
 
     public void resetSquare(int index) {
@@ -75,12 +81,6 @@ public class Board {
      */
     public boolean checkPlayerIsWinner(Player incomingPlayer) {
         int marker = incomingPlayer.getMarker();
-
-        System.out.print("     Board state: ");
-        for (int i: board) {
-            System.out.print(i);
-        }
-        System.out.println();
 
                 // horizontal wins
         return  (board[0] == board[1] && board[0] == board[2] && board[0] == marker) ||

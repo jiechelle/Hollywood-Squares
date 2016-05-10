@@ -74,7 +74,7 @@ public class GameGUI {
                 playerFeedback(game.determineSquareFate(game.computerResponse(), selectedSquare));
             }
 
-            // for the computer
+            // if the computer does not win from the playerFeedback() call then enable the buttons
             if (!game.checkCurrentPlayerIsWinner()) {
                 displayPlayerTurnAndInstructions();
 
@@ -109,8 +109,8 @@ public class GameGUI {
 
         displayCurrentScore();
 
-        // Check if the current player is the winner only if the currentPlayer set the Square
-        if (squareMarker == game.getCurrentPlayer().getMarker() && game.checkCurrentPlayerIsWinner()) {
+        // Check if the current player is the winner
+        if (game.checkCurrentPlayerIsWinner()) {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is the winner\n");
 
             // Display winner on GUI
@@ -132,6 +132,10 @@ public class GameGUI {
             // players[1] = null;
             // loginGUI.launchLogin(boardStage);
 
+        } else if (game.getCurrentPlayer().getUsername().equals("the computer")) {
+            game.nextPlayer();
+            System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not the winner\n");
+            endTurn.setVisible(true);
         } else {
             System.out.println("Current player (" + game.getCurrentPlayer().getUsername() + ") is not the winner\n");
             endTurn.setVisible(true);
@@ -145,10 +149,6 @@ public class GameGUI {
             boardButtons[selectedSquare].setText("X");
         else if (squareMarker == 2)
             boardButtons[selectedSquare].setText("O");
-
-        if (game.getCurrentPlayer().getUsername().equals("the computer") && !game.checkCurrentPlayerIsWinner()) {
-            game.nextPlayer();
-        }
     }
 
     private void boardButtonBehavior() {
