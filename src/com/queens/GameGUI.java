@@ -16,12 +16,16 @@ public class GameGUI {
     private Button agree;
     private Button disagree;
     private Button endTurn;
+    private Button restart;
+    private Button returnToLogin;
     private Text scores;
     private Text question;
     private Text celebrityResponse;
     private Text isCorrect;
     private Text currentPlayer;
     private int selectedSquare;
+    
+    public static boolean returnLogin = false;
 
     private Stage boardStage;
     private Scene gameScene;
@@ -63,6 +67,17 @@ public class GameGUI {
 
         disagree.setOnAction(e -> {
             playerFeedback(game.determineSquareFate(false, selectedSquare));
+        });
+        
+        restart.setOnAction(e -> {     	
+            game.restartGame();
+            this.launchGame(boardStage);
+        });
+        
+        returnToLogin.setOnAction(e -> {
+        	returnLogin = true;
+        	game.restartGame();
+            loginGUI.launchLogin(boardStage);
         });
 
         endTurn.setOnAction(e -> {
@@ -175,16 +190,23 @@ public class GameGUI {
         agree = new Button("True");
         disagree = new Button("False");
         endTurn = new Button("End Turn");
+        restart = new Button("Restart game");
+        returnToLogin = new Button("Return to login");
 
         // set size of buttons
         agree.setPrefSize(100, 20);
         disagree.setPrefSize(100, 20);
         endTurn.setPrefSize(100, 20);
+        restart.setPrefSize(100, 20);
+        returnToLogin.setPrefSize(100, 20);
 
         // Hide agree, disagree and endTurn buttons
         agree.setVisible(false);
         disagree.setVisible(false);
         endTurn.setVisible(false);
+        
+        restart.setVisible(true);
+        returnToLogin.setVisible(true);
 
         // Initialize text fields
         scores = new Text();
@@ -229,7 +251,7 @@ public class GameGUI {
         scoreBox.getChildren().addAll(scores);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
-        trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn);
+        trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn, restart, returnToLogin);
 
         gameBox.getChildren().addAll(scoreBox, questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
