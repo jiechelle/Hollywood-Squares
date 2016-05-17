@@ -1,14 +1,19 @@
 package com.queens;
 
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import static com.sun.glass.ui.Cursor.setVisible;
 
 public class GameGUI {
 
@@ -24,7 +29,7 @@ public class GameGUI {
     private Text isCorrect;
     private Text currentPlayer;
     private int selectedSquare;
-    
+
     public static boolean returnLogin = false;
 
     private Stage boardStage;
@@ -35,7 +40,7 @@ public class GameGUI {
     private static LoginGUI loginGUI;
     private Player[] players = new Player[2];
 
-    public GameGUI(DataFile iData,Player[] iPlayers, LoginGUI iloginGUI) {
+    public GameGUI(DataFile iData, Player[] iPlayers, LoginGUI iloginGUI) {
         data = iData;
         players = iPlayers;
         loginGUI = iloginGUI;
@@ -68,17 +73,49 @@ public class GameGUI {
         disagree.setOnAction(e -> {
             playerFeedback(game.determineSquareFate(false, selectedSquare));
         });
-        
-        restart.setOnAction(e -> {     	
-            game.restartGame();
-            this.launchGame(boardStage);
+
+        //MENU OPTION PANE START
+        GridPane grid = new GridPane();
+        grid.setPrefSize(420, 10);
+        grid.setHgap(20);
+        grid.setVgap(20);
+
+        Dialog<String> menu = new Dialog<>();
+        menu.setTitle("MENU");
+        menu.setHeaderText("Please select an option");
+
+        ButtonType restartBtn = new ButtonType("Reset Board", ButtonBar.ButtonData.RIGHT);
+        ButtonType loginBtn = new ButtonType("Return to Login", ButtonBar.ButtonData.RIGHT);
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        menu.getDialogPane().getButtonTypes().addAll(restartBtn, loginBtn, cancelBtn);
+        menu.getDialogPane().setContent(grid);
+
+        restart.setOnAction(ex -> {
+            menu.setResultConverter(button -> {
+                if (button == restartBtn) {
+                    return "restart";
+                } else if (button == loginBtn) {
+                    return "login";
+                } else if (button == cancelBtn) {
+                    return "exit";
+                }
+                return "exit";
+            });
+
+            menu.showAndWait().ifPresent(result -> {
+                if (result == "exit") menu.close();
+                if (result == "restart") {
+                    game.restartGame();
+                    this.launchGame(boardStage);
+                } else if (result == "login") {
+                    returnLogin = true;
+                    game.restartGame();
+                    loginGUI.launchLogin(boardStage);
+                }
+            });
         });
-        
-        returnToLogin.setOnAction(e -> {
-        	returnLogin = true;
-        	game.restartGame();
-            loginGUI.launchLogin(boardStage);
-        });
+        //END MENU PANE
 
         endTurn.setOnAction(e -> {
             game.nextPlayer();
@@ -190,23 +227,20 @@ public class GameGUI {
         agree = new Button("True");
         disagree = new Button("False");
         endTurn = new Button("End Turn");
-        restart = new Button("Restart game");
-        returnToLogin = new Button("Return to login");
+        restart = new Button("MENU");
 
         // set size of buttons
         agree.setPrefSize(100, 20);
         disagree.setPrefSize(100, 20);
         endTurn.setPrefSize(100, 20);
         restart.setPrefSize(100, 20);
-        returnToLogin.setPrefSize(100, 20);
 
         // Hide agree, disagree and endTurn buttons
         agree.setVisible(false);
         disagree.setVisible(false);
         endTurn.setVisible(false);
-        
+
         restart.setVisible(true);
-        returnToLogin.setVisible(true);
 
         // Initialize text fields
         scores = new Text();
@@ -251,7 +285,7 @@ public class GameGUI {
         scoreBox.getChildren().addAll(scores);
         questionBox.getChildren().addAll(question);
         responseBox.getChildren().addAll(celebrityResponse, isCorrect);
-        trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn, restart, returnToLogin);
+        trueOrFalseBox.getChildren().addAll(currentPlayer, agree, disagree, endTurn, restart);
 
         gameBox.getChildren().addAll(scoreBox, questionBox, responseBox, firstRowSquares, secondRowSquares, thirdRowSquares, trueOrFalseBox);
 
@@ -268,7 +302,7 @@ public class GameGUI {
     private void displayCurrentScore() {
         scores.setText("Scores:    " +
                 game.getPlayer1().getUsername() + " (" + game.getPlayer1().getMarkerLetter() + "):   " + game.getPlayer1().getCurrentScore() + "        " +
-                game.getPlayer2().getUsername() + " (" + game.getPlayer2().getMarkerLetter() + "):   "  + game.getPlayer2().getCurrentScore());
+                game.getPlayer2().getUsername() + " (" + game.getPlayer2().getMarkerLetter() + "):   " + game.getPlayer2().getCurrentScore());
     }
 
 }
