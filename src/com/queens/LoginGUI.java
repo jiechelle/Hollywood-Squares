@@ -127,6 +127,12 @@ public class LoginGUI {
 
             //check if player credentials are valid based on their input
             if (data.checkPlayerCredentials(tempUser, tempPass)) {
+                
+                if(GameGUI.returnLogin == true) {
+            		players[0] = null;
+            		players[1] = null;
+            		GameGUI.returnLogin = false;
+            	}
 
                 // assign verified players to array depending on case 1 or case 2
                 if (players[0] == null) {
