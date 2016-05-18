@@ -42,6 +42,7 @@ public class Board {
 
     public void setSecretSquare() {
         secretSquare = new Random().nextInt(9);
+        System.out.println("Secret square has been set. "+ secretSquare);
     }
 
     public int getSecretSquare() {

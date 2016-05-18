@@ -104,9 +104,15 @@ public class Game {
 
             System.out.println("Marking current player (" + currentPlayer.getUsername() + ")");
             board.setSquare(index, currentPlayer);
-            currentPlayer.incCurrentScore(1);
-            currentPlayer.incMarkerCount(1);
-            return currentPlayer.getMarker();
+            if (index == board.getSecretSquare()){
+                currentPlayer.incCurrentScore(5);
+                currentPlayer.incMarkerCount(1);
+                return currentPlayer.getMarker();
+            }else {
+                currentPlayer.incCurrentScore(1);
+                currentPlayer.incMarkerCount(1);
+                return currentPlayer.getMarker();
+            }
 
             // else set the square for the otherPlayer but if the otherPlayer
             // wins then reset the square
@@ -121,8 +127,13 @@ public class Game {
                     + ") and then going to check if he/she has won");
 
             board.setSquare(index, otherPlayer);
-            otherPlayer.incMarkerCount(1);
-            otherPlayer.incCurrentScore(1);
+            if (index == board.getSecretSquare()){
+                otherPlayer.incMarkerCount(1);
+                otherPlayer.incCurrentScore(5);
+            }else{
+                otherPlayer.incMarkerCount(1);
+                otherPlayer.incCurrentScore(1);
+            }
 
             // if the other player wins by setting square then resetSquare and
             // decrement markerCount and currentScore
@@ -132,8 +143,13 @@ public class Game {
 
                 board.updateAvailableSquares();
                 board.resetSquare(index);
-                otherPlayer.incMarkerCount(-1);
-                otherPlayer.incCurrentScore(-1);
+                if (index == board.getSecretSquare()){
+                    otherPlayer.incMarkerCount(-1);
+                    otherPlayer.incCurrentScore(-5);
+                }else{
+                    otherPlayer.incMarkerCount(-1);
+                    otherPlayer.incCurrentScore(-1);
+                }
                 return 0;  // Nobody gets the square
 
             // else the other player does not win with the new square and gets to keep it
@@ -183,6 +199,9 @@ public class Game {
 
     // todo finish method
     public void endGame() {
+
+        data.writePlayers();
+
         board.resetBoard();
 
     }
