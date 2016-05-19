@@ -104,11 +104,11 @@ public class Game {
 
             System.out.println("Marking current player (" + currentPlayer.getUsername() + ")");
             board.setSquare(index, currentPlayer);
-            if (index == board.getSecretSquare()){
+            if (index == board.getSecretSquare()) {
                 currentPlayer.incCurrentScore(5);
                 currentPlayer.incMarkerCount(1);
                 return currentPlayer.getMarker();
-            }else {
+            } else {
                 currentPlayer.incCurrentScore(1);
                 currentPlayer.incMarkerCount(1);
                 return currentPlayer.getMarker();
@@ -127,10 +127,10 @@ public class Game {
                     + ") and then going to check if he/she has won");
 
             board.setSquare(index, otherPlayer);
-            if (index == board.getSecretSquare()){
+            if (index == board.getSecretSquare()) {
                 otherPlayer.incMarkerCount(1);
                 otherPlayer.incCurrentScore(5);
-            }else{
+            } else {
                 otherPlayer.incMarkerCount(1);
                 otherPlayer.incCurrentScore(1);
             }
@@ -143,16 +143,16 @@ public class Game {
 
                 board.updateAvailableSquares();
                 board.resetSquare(index);
-                if (index == board.getSecretSquare()){
+                if (index == board.getSecretSquare()) {
                     otherPlayer.incMarkerCount(-1);
                     otherPlayer.incCurrentScore(-5);
-                }else{
+                } else {
                     otherPlayer.incMarkerCount(-1);
                     otherPlayer.incCurrentScore(-1);
                 }
                 return 0;  // Nobody gets the square
 
-            // else the other player does not win with the new square and gets to keep it
+                // else the other player does not win with the new square and gets to keep it
             } else {
                 System.out.println("Other player (" + otherPlayer.getUsername()
                         + ") does not win, other player keeps the square");
@@ -188,21 +188,11 @@ public class Game {
         }
     }
 
-    // todo finish method
     public void restartGame() {
         board.resetBoard();
         player1.resetMarkerCount();
         player1.resetCurrentScore();
         player2.resetMarkerCount();
         player2.resetCurrentScore();
-    }
-
-    // todo finish method
-    public void endGame() {
-
-        data.writePlayers();
-
-        board.resetBoard();
-
     }
 }

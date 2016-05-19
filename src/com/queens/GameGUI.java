@@ -101,7 +101,7 @@ public class GameGUI {
                     return "restart";
                 } else if (button == loginBtn) {
                     return "login";
-                }else if (button == cancelBtn) {
+                } else if (button == cancelBtn) {
                     return "exit";
                 }
                 return "exit";
@@ -127,7 +127,7 @@ public class GameGUI {
             // if the next player is "the computer" then select a square and then call nextPlayer
             if (game.getCurrentPlayer().getUsername().equals("the computer")) {
                 selectedSquare = game.computerSelectSquare();
-                if(selectedSquare == game.getSecretSquare()) {
+                if (selectedSquare == game.getSecretSquare()) {
                     boardButtons[selectedSquare].setStyle("-fx-base: #33FFF6");
                 }
                 playerFeedback(game.determineSquareFate(game.computerResponse(), selectedSquare));
@@ -215,10 +215,10 @@ public class GameGUI {
         // When square is clicked, pick a question from the file
         game.selectQuestion();
 
-        if(selectedSquare == game.getSecretSquare()){
+        if (selectedSquare == game.getSecretSquare()) {
             boardButtons[selectedSquare].setStyle("-fx-base: #33FFF6");
-            question.setText("SECRET SQUARE QUESTION!   "+game.getQuestion());
-        }else{
+            question.setText("SECRET SQUARE QUESTION!   " + game.getQuestion());
+        } else {
             // set the Text for question and celebrityResponse
             question.setText(game.getQuestion());
         }
@@ -261,7 +261,7 @@ public class GameGUI {
         celebrityResponse = new Text();
         isCorrect = new Text();
         currentPlayer = new Text();
-        currentPlayerHS =new Text();
+        currentPlayerHS = new Text();
 
         displayPlayerTurnAndInstructions();
         displayCurrentScore();
@@ -315,7 +315,7 @@ public class GameGUI {
         celebrityResponse.setText("");
         isCorrect.setText("");
         currentPlayer.setText(game.getCurrentPlayer().getUsername() + "'s turn");
-        currentPlayerHS.setText(game.getCurrentPlayer().getUsername() + "'s high scores: "+game.getCurrentPlayer().getHighScores().toString());
+        currentPlayerHS.setText(game.getCurrentPlayer().getUsername() + "'s high scores: " + game.getCurrentPlayer().getHighScores().toString());
     }
 
     private void displayCurrentScore() {
