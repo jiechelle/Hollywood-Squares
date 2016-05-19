@@ -108,7 +108,7 @@ public class LoginGUI {
 
         // Disable password field until previous field filled
         Node loginButton = logBtn;
-        loginButton.setDisable(true);
+        logBtn.setDisable(true);
 
         Node registerButton = rBtn;
         registerButton.setDisable(true);
@@ -128,7 +128,7 @@ public class LoginGUI {
             //check if player credentials are valid based on their input
             if (data.checkPlayerCredentials(tempUser, tempPass)) {
 
-                if (GameGUI.returnLogin == true) {
+                if (GameGUI.returnLogin) {
                     players[0] = null;
                     players[1] = null;
                     GameGUI.returnLogin = false;
@@ -211,7 +211,7 @@ public class LoginGUI {
             });
 
             confirm.showAndWait().ifPresent(result -> {
-                if (result == "ok") {
+                if (result.equals("ok")) {
                     if (tempPass.equals(confirmPass.getText())) {
                         try {
                             data.addPlayer(tempUser, tempPass);

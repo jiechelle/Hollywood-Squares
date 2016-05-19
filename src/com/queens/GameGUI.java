@@ -1,7 +1,5 @@
 package com.queens;
 
-import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -13,8 +11,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import static com.sun.glass.ui.Cursor.setVisible;
-
 public class GameGUI {
 
     private Button[] boardButtons;
@@ -22,8 +18,6 @@ public class GameGUI {
     private Button disagree;
     private Button endTurn;
     private Button restart;
-    private Button HighScore;
-    private Button returnToLogin;
     private Text scores;
     private Text question;
     private Text celebrityResponse;
@@ -68,13 +62,8 @@ public class GameGUI {
             });
         }
 
-        agree.setOnAction(e -> {
-            playerFeedback(game.determineSquareFate(true, selectedSquare));
-        });
-
-        disagree.setOnAction(e -> {
-            playerFeedback(game.determineSquareFate(false, selectedSquare));
-        });
+        agree.setOnAction(e -> playerFeedback(game.determineSquareFate(true, selectedSquare)));
+        disagree.setOnAction(e -> playerFeedback(game.determineSquareFate(false, selectedSquare)));
 
         //MENU OPTION PANE START
         GridPane grid = new GridPane();
@@ -90,7 +79,6 @@ public class GameGUI {
         ButtonType restartBtn = new ButtonType("Reset Board", ButtonBar.ButtonData.RIGHT);
         ButtonType loginBtn = new ButtonType("Return to Login", ButtonBar.ButtonData.RIGHT);
         ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
 
         menu.getDialogPane().getButtonTypes().addAll(restartBtn, loginBtn, cancelBtn);
         menu.getDialogPane().setContent(grid);
@@ -108,11 +96,11 @@ public class GameGUI {
             });
 
             menu.showAndWait().ifPresent(result -> {
-                if (result == "exit") menu.close();
-                if (result == "restart") {
+                if (result.equals("exit")) menu.close();
+                if (result.equals("restart")) {
                     game.restartGame();
                     this.launchGame(boardStage);
-                } else if (result == "login") {
+                } else if (result.equals("login")) {
                     returnLogin = true;
                     game.restartGame();
                     loginGUI.launchLogin(boardStage);
@@ -183,14 +171,6 @@ public class GameGUI {
             currentPlayer.setText("");
             currentPlayerHS.setText("");
             isCorrect.setText("");
-
-            // todo: create dialog pop up box to ask user to choose one of two things ...
-            // todo: replay the game with same players OR return to login
-            // return to login, need to reset board state, player state, game state etc..
-            // if game is restarted then call game.restartGame()
-            // players[0] = null;
-            // players[1] = null;
-            // loginGUI.launchLogin(boardStage);
 
         } else if (game.getCurrentPlayer().getUsername().equals("the computer")) {
             game.nextPlayer();
